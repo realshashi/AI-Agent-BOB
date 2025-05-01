@@ -1,121 +1,265 @@
 import pandas as pd
 import logging
-import io
+import json
 from typing import List, Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
 
-# Real dataset of 501 bottles as a string (tab-separated values)
-BOTTLE_DATA = """id      name    size    proof   abv     spirit_type     brand_id        popularity      image_url       avg_msrp        fair_price      shelf_price     total_score     wishlist_count
-164     Blanton's Original Single Barrel        750     93      46.5    Bourbon 10      100737  https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec8QcHSZugg64kQy     74.99   104.52  139.86  92451   8983
-2848    Eagle Rare 10 Year      750             45      Bourbon 542     100519  https://d1w35me0y6a2bb.cloudfront.net/newproducts/ecce066b-6b3d-4b58-bd04-8bf9c67e3e92  39.99   66.25   49.99   82217   8744
-4984    E.H. Taylor, Jr. Small Batch    750             50      Bourbon 210     100407  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recE8VJ2hGGJwZjdh     44.99   94.43   93.57   61777   8161
-466     Buffalo Trace   750     90      45      Bourbon 245     100447  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recbYY28UjL8EfuFD     26.99   41.82   36.96   49610   3403
-158     Weller Antique 107      750             53.5    Bourbon 156     100266  https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec8X36afthvgqzO9     56.35   116.66  109.89  40001   8098
-2803    Weller Special Reserve  750             45      Bourbon 156     100328  https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec3BbLSm2nodYUyX     29.49   58.63   64.99   39429   3810
-1586    Weller 12 Year The Original Wheated Bourbon     750     90      45      Bourbon 8728    100251  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recOZgUIgr8PGd6VI     159.99  178.62  234.49  25142   5835
-2993    Stagg Jr.       750     134.4   67.2    Bourbon 3640    100027  https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec5jaoF5vloYmUBL     49.46   147.92  172.99  23209   6685
-4662    Henry McKenna 10 Year   750             50      Bourbon 777     100145  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recA4ugxUL7JhJfau     60.49   75.24   79.99   20707   1832
-409     Weller Full Proof       750             57      Bourbon 156     100191  https://d1w35me0y6a2bb.cloudfront.net/newproducts/reca43ZoXAj2Ri9Lg     61.99   188.33  399.99  20287   5486
-5120    E.H. Taylor, Jr. Single Barrel  750             50      Bourbon 210     100206  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recGEFcW3n6oxv1Uo     73.76   166.45  135.14  20267   4889
-13266   Heaven Hill Bottled In Bond 7 Year      750             50      Bourbon 430     100144  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recSJfTSxTvljLvF8     47.74   62.34   84.99   18850   1948
-13089   Elijah Craig Toasted Barrel     750             47      Bourbon 430     100094  https://d1w35me0y6a2bb.cloudfront.net/newproducts/reciJGrkEXMQOdqYk     49.72   74.17   82.99   17328   2058
-150     1792 Full Proof 750             62.5    Bourbon 42      100098  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recVcP95KH4To384H     45.92   73.06   79.87   16891   2392
-159     Blanton's Gold Edition  750     103     51.5    Bourbon 10      100190  https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec4yIwUce6C3kD9K     119.99  232.52  324.99  14458   3680
-4905    Elmer T. Lee    750     90      45      Bourbon 700     100142  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recDKdd9GSrWJS6so     56.66   147.57  329.87  14337   3855
-1296    Knob Creek 12 Year      750             50      Bourbon 189     100113  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recLpshU8Flh0HWX2     61.99   86.81   91.29   13625   1444
-1805    Sazerac Rye Whiskey     750             45      Rye     705     100054  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recRzB6sPjEkkc9Ac     28.73   46.77   51.89   13399   776
-1816    Wild Turkey Rare Breed  750     116.8   58.4    Bourbon 191     100084  https://d1w35me0y6a2bb.cloudfront.net/newproducts/113b14ea-348f-4525-be01-962b0b2a494d  46.03   70.61   68.79   13373   2054
-2336    Woodford Reserve Double Oaked   750     90.4    45.2    Bourbon 2004    100171  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recXaFRMlPLwSoi4x     57.99   66.85   72.28   12705   1456
-1522    Russell's Reserve 10 Year       750             45      Bourbon 191     100122  https://d1w35me0y6a2bb.cloudfront.net/newproducts/7dc9a32b-a17e-4f97-9fed-55a1590dc01e  45.99   56.99   48.74   12391   1368
-263     Old Forester 1920 Prohibition Style     750     115     57.5    Bourbon 152     100076  https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec9rWFMe841rV5IM     59.33   72.85   67.99   11816   1919
-3088    Rock Hill Farms Bourbon 750     100     50      Bourbon 245     100081  https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec7mpJRtKOr1cEiO     54.14   219.98  126.11  10747   3845
-4589    Weller C.Y.P.B. 750             47.5    Bourbon 156     100091  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recz9x6jyd356mKQr     49.17   231.09  131.66  10094   4091
-4742    Old Grand Dad 114       750     114     57      Bourbon 793     100053  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recB4lGZiQD5WkxF2     30.75   40.74   33.84   10055   1084
-15946   Smoke Wagon Uncut Unfiltered Bourbon    750     116     58      Bourbon 2808    100029  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recByGtvjDSp526md     64.99   107.24  147.89  9863    1450
-2839    Caribou Crossing        750     80      40      Canadian Whisky 3733    100083  https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec3hNpA6z3k6SLoM     49.96   95.28   59.57   9529    1502
-2193    Evan Williams Bottled in Bond White Label       750     100     50      Bourbon 167     1999    https://d1w35me0y6a2bb.cloudfront.net/newproducts/recWNSuvGjvgQnETn     17.02   32.19   20.19   9513    736
-1643    1792 Small Batch        750     93.7    46.85   Bourbon 42      100056  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recPrwD5rKmPZg46E     30.3    45.11   33.22   9413    950
-1165    Four Roses Single Barrel Straight Bourbon       750     120     60      Bourbon 148     200     https://d1w35me0y6a2bb.cloudfront.net/newproducts/recJ9EADPkHTwS0RA     56.64   68.79   116.7   8466    1621
-3655    Angel's Envy    750             43.3    Bourbon 96      100062  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recouUD6gO8QVoZAR     49.2    69.02   36.7    8236    750
-4952    Elijah Craig 18 Year Single Barrel      750     90      45      Bourbon 2       100078  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recEsF0rPlfwLeCfY     136.4   236.83  282.16  8228    1366
-1587    Willett Pot Still Reserve Bourbon       750     94      47      Bourbon 2986    100083  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recOZNbiS2qeEzvMV     52.21   73.74   45.71   8210    765
-4792    Elijah Craig Small Batch        750     94      47      Bourbon 2       100045  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recCqt8eLgYeGLhVL     27.78   45.78   27.05   8025    799
-1821    Russell's Reserve Single Barrel 750             55      Bourbon 496     100049  https://d1w35me0y6a2bb.cloudfront.net/newproducts/d2934235-5ffd-4e02-a3f1-c71a5fa1950c  57.4    81.44   61.99   8022    1403
-355     Baker's 7 Year 107 Proof        750             53.5    Bourbon 288     100050  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recamriufRtYtLcwg     61.08   85.23   74.99   7772    677
-12843   Blanton's Straight from the Barrel      750     126.7   63.35   Bourbon 10      100104  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recwXvqbYMYWra2O8     149.98  269.23  241.66  7757    2573
-2214    Old Forester 1910 Old Fine Whiskey      750     93      46.5    Bourbon 152     100059  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recWs3a6MAh1UQFLD     53.62   67.48   53.19   7673    1167
-1211    Old Rip Van Winkle 10 Year      750             53.5    Bourbon 370     100108  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recKrKq9ATE8BVhNn     129.99  576.68  816.66  7590    2100
-16078   Russell's Reserve 13 Years Bourbon      750     114.8   57.4    Bourbon 496     100064  https://d1w35me0y6a2bb.cloudfront.net/newproducts/da9947fd-7230-49fe-8915-ab5b427c8678  109.97  246.23  264.99  7586    2297
-6462    Hendrick's Gin  750     88      44      Gin     1074    933     https://d1w35me0y6a2bb.cloudfront.net/newproducts/recvWBDL5jDagd2Dw     37.97   40.56   39.13   7542    941
-1282    Willett Family Estate Small Batch Rye 4 Year    750     110     55      Rye     2986    100049  https://d1w35me0y6a2bb.cloudfront.net/newproducts/89de97f2-13d3-400f-9731-bdc4bf3034a3  60.58   89.01   93.69   7534    595
-873     Weller Special Reserve  1750    90      45      Bourbon 156     100039  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recgypUtYKyW6YIWw     53.28   90.38   178.73  7487    700
-1629    Michter's US1 Kentucky Straight Bourbon 750     91      45.5    Bourbon 405     100061  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recPSfHPtufbKxfqY     41.82   72.44   63.99   7458    774
-3574    1792 Bottled In Bond     750     100     50      Bourbon 42      100053  https://d1w35me0y6a2bb.cloudfront.net/newproducts/recnp19G98DNJ8InU     41.64   84.64   63.84   7312    1002
-16773   Empress 1908 Indigo Gin  750     85      42.5    Gin     3101    7       https://d1w35me0y6a2bb.cloudfront.net/newproducts/b67b57e0-548c-430d-982f-d9c68f3d17f4  39.97   51.47   43.19   6541    307
-2580    J.P. Wiser's 18 Year     750     80      40      Canadian Whisky 159     2       https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec03I5wSqGi19rXR  61.87   65.61   68.04   5427    201
-24961   Rare Perfection 14 Year  750     100.7   50.35   Canadian Whisky 2827    0       https://d1w35me0y6a2bb.cloudfront.net/newproducts/247ad792-6d80-4d4d-92f6-4789183cd2f0  160     164.85  179.39  3210    88
-"""
+# JSON dataset of bottles
+BOTTLE_DATA = [
+    {
+        "id": 13266,
+        "name": "Heaven Hill Bottled In Bond 7 Year",
+        "size": 750,
+        "proof": 100.0,
+        "abv": 50.0,
+        "spirit_type": "Bourbon",
+        "brand_id": 430,
+        "popularity": 100144,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/recSJfTSxTvljLvF8",
+        "msrp": 47.74,
+        "fair_price": 62.34,
+        "shelf_price": 84.99,
+        "total_score": 18850,
+        "wishlist_count": 1948
+    },
+    {
+        "id": 16773,
+        "name": "Empress 1908 Indigo Gin",
+        "size": 750,
+        "proof": 85.0,
+        "abv": 42.5,
+        "spirit_type": "Gin",
+        "brand_id": 3101,
+        "popularity": 7,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/b67b57e0-548c-430d-982f-d9c68f3d17f4",
+        "msrp": 39.97,
+        "fair_price": 51.47,
+        "shelf_price": 43.19,
+        "total_score": 6541,
+        "wishlist_count": 307
+    },
+    {
+        "id": 2580,
+        "name": "J.P. Wiser's 18 Year",
+        "size": 750,
+        "proof": 80.0,
+        "abv": 40.0,
+        "spirit_type": "Canadian Whisky",
+        "brand_id": 159,
+        "popularity": 2,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec03I5wSqGi19rXR",
+        "msrp": 61.87,
+        "fair_price": 65.61,
+        "shelf_price": 68.04,
+        "total_score": 5427,
+        "wishlist_count": 201
+    },
+    {
+        "id": 24961,
+        "name": "Rare Perfection 14 Year",
+        "size": 750,
+        "proof": 100.7,
+        "abv": 50.35,
+        "spirit_type": "Canadian Whisky",
+        "brand_id": 2827,
+        "popularity": 0,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/247ad792-6d80-4d4d-92f6-4789183cd2f0",
+        "msrp": 160.0,
+        "fair_price": 164.85,
+        "shelf_price": 179.39,
+        "total_score": 3210,
+        "wishlist_count": 88
+    },
+    {
+        "id": 6462,
+        "name": "Hendrick's Gin",
+        "size": 750,
+        "proof": 88.0,
+        "abv": 44.0,
+        "spirit_type": "Gin",
+        "brand_id": 1074,
+        "popularity": 933,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/recvWBDL5jDagd2Dw",
+        "msrp": 37.97,
+        "fair_price": 40.56,
+        "shelf_price": 39.13,
+        "total_score": 7542,
+        "wishlist_count": 941
+    },
+    {
+        "id": 164,
+        "name": "Blanton's Original Single Barrel",
+        "size": 750,
+        "proof": 93.0,
+        "abv": 46.5,
+        "spirit_type": "Bourbon",
+        "brand_id": 10,
+        "popularity": 100737,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec8QcHSZugg64kQy",
+        "msrp": 74.99,
+        "fair_price": 104.52,
+        "shelf_price": 139.86,
+        "total_score": 92451,
+        "wishlist_count": 8983
+    },
+    {
+        "id": 2848,
+        "name": "Eagle Rare 10 Year",
+        "size": 750,
+        "proof": 90.0,
+        "abv": 45.0,
+        "spirit_type": "Bourbon",
+        "brand_id": 542,
+        "popularity": 100519,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/ecce066b-6b3d-4b58-bd04-8bf9c67e3e92",
+        "msrp": 39.99,
+        "fair_price": 66.25,
+        "shelf_price": 49.99,
+        "total_score": 82217,
+        "wishlist_count": 8744
+    },
+    {
+        "id": 4984,
+        "name": "E.H. Taylor, Jr. Small Batch",
+        "size": 750,
+        "proof": 100.0,
+        "abv": 50.0,
+        "spirit_type": "Bourbon",
+        "brand_id": 210,
+        "popularity": 100407,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/recE8VJ2hGGJwZjdh",
+        "msrp": 44.99,
+        "fair_price": 94.43,
+        "shelf_price": 93.57,
+        "total_score": 61777,
+        "wishlist_count": 8161
+    },
+    {
+        "id": 466,
+        "name": "Buffalo Trace",
+        "size": 750,
+        "proof": 90.0,
+        "abv": 45.0,
+        "spirit_type": "Bourbon",
+        "brand_id": 245,
+        "popularity": 100447,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/recbYY28UjL8EfuFD",
+        "msrp": 26.99,
+        "fair_price": 41.82,
+        "shelf_price": 36.96,
+        "total_score": 49610,
+        "wishlist_count": 3403
+    },
+    {
+        "id": 158,
+        "name": "Weller Antique 107",
+        "size": 750,
+        "proof": 107.0,
+        "abv": 53.5,
+        "spirit_type": "Bourbon",
+        "brand_id": 156,
+        "popularity": 100266,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec8X36afthvgqzO9",
+        "msrp": 56.35,
+        "fair_price": 116.66,
+        "shelf_price": 109.89,
+        "total_score": 40001,
+        "wishlist_count": 8098
+    },
+    {
+        "id": 1805,
+        "name": "Sazerac Rye Whiskey",
+        "size": 750,
+        "proof": 90.0,
+        "abv": 45.0,
+        "spirit_type": "Rye",
+        "brand_id": 705,
+        "popularity": 100054,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/recRzB6sPjEkkc9Ac",
+        "msrp": 28.73,
+        "fair_price": 46.77,
+        "shelf_price": 51.89,
+        "total_score": 13399,
+        "wishlist_count": 776
+    },
+    {
+        "id": 1282,
+        "name": "Willett Family Estate Small Batch Rye 4 Year",
+        "size": 750,
+        "proof": 110.0,
+        "abv": 55.0,
+        "spirit_type": "Rye",
+        "brand_id": 2986,
+        "popularity": 100049,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/89de97f2-13d3-400f-9731-bdc4bf3034a3",
+        "msrp": 60.58,
+        "fair_price": 89.01,
+        "shelf_price": 93.69,
+        "total_score": 7534,
+        "wishlist_count": 595
+    },
+    {
+        "id": 1296,
+        "name": "Knob Creek 12 Year",
+        "size": 750,
+        "proof": 100.0,
+        "abv": 50.0,
+        "spirit_type": "Bourbon",
+        "brand_id": 189,
+        "popularity": 100113,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/recLpshU8Flh0HWX2",
+        "msrp": 61.99,
+        "fair_price": 86.81,
+        "shelf_price": 91.29,
+        "total_score": 13625,
+        "wishlist_count": 1444
+    },
+    {
+        "id": 263,
+        "name": "Old Forester 1920 Prohibition Style",
+        "size": 750,
+        "proof": 115.0,
+        "abv": 57.5,
+        "spirit_type": "Bourbon",
+        "brand_id": 152,
+        "popularity": 100076,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec9rWFMe841rV5IM",
+        "msrp": 59.33,
+        "fair_price": 72.85,
+        "shelf_price": 67.99,
+        "total_score": 11816,
+        "wishlist_count": 1919
+    },
+    {
+        "id": 2993,
+        "name": "Stagg Jr.",
+        "size": 750,
+        "proof": 134.4,
+        "abv": 67.2,
+        "spirit_type": "Bourbon",
+        "brand_id": 3640,
+        "popularity": 100027,
+        "image_url": "https://d1w35me0y6a2bb.cloudfront.net/newproducts/rec5jaoF5vloYmUBL",
+        "msrp": 49.46,
+        "fair_price": 147.92,
+        "shelf_price": 172.99,
+        "total_score": 23209,
+        "wishlist_count": 6685
+    }
+]
 
 def get_bottle_dataset() -> pd.DataFrame:
     """
-    Loads the bottle dataset - creates a minimum dataset with known bottles that are in Carrie's collection
+    Loads the bottle dataset from our JSON data
     
     Returns:
         A pandas DataFrame containing all bottles with their attributes
     """
-    # Create a dataset with the bottles we know Carrie has in her collection
-    data = {
-        'id': [13266, 16773, 2580, 24961, 6462],
-        'name': ["Heaven Hill Bottled In Bond 7 Year", "Empress 1908 Indigo Gin", "J.P. Wiser's 18 Year", "Rare Perfection 14 Year", "Hendrick's Gin"],
-        'spirit_type': ["Bourbon", "Gin", "Canadian Whisky", "Canadian Whisky", "Gin"],
-        'abv': [50.0, 42.5, 40.0, 50.35, 44.0],
-        'proof': [100.0, 85.0, 80.0, 100.7, 88.0], 
-        'msrp': [47.74, 39.97, 61.87, 160.0, 37.97]
-    }
+    # Create DataFrame from our JSON data
+    df = pd.DataFrame(BOTTLE_DATA)
     
-    # Add more popular bottles to provide good recommendations
-    bourbon_data = {
-        'id': [164, 2848, 4984, 466, 158, 2803, 1586],
-        'name': [
-            "Blanton's Original Single Barrel",
-            "Eagle Rare 10 Year",
-            "E.H. Taylor, Jr. Small Batch",
-            "Buffalo Trace",
-            "Weller Antique 107",
-            "Weller Special Reserve",
-            "Weller 12 Year"
-        ],
-        'spirit_type': ["Bourbon"] * 7,
-        'abv': [46.5, 45.0, 50.0, 45.0, 53.5, 45.0, 45.0],
-        'proof': [93.0, 90.0, 100.0, 90.0, 107.0, 90.0, 90.0],
-        'msrp': [74.99, 39.99, 44.99, 26.99, 56.35, 29.49, 159.99]
-    }
-    
-    # Combine the dataframes
-    df_initial = pd.DataFrame(data)
-    df_bourbon = pd.DataFrame(bourbon_data)
-    
-    df = pd.concat([df_initial, df_bourbon], ignore_index=True)
-    
-    # Add some other spirits for variety
-    other_spirits = {
-        'id': [1805, 1282, 263, 1296],
-        'name': [
-            "Sazerac Rye Whiskey",
-            "Willett Family Estate Small Batch Rye 4 Year",
-            "Old Forester 1920 Prohibition Style",
-            "Knob Creek 12 Year"
-        ],
-        'spirit_type': ["Rye", "Rye", "Bourbon", "Bourbon"],
-        'abv': [45.0, 55.0, 57.5, 50.0],
-        'proof': [90.0, 110.0, 115.0, 100.0],
-        'msrp': [28.73, 60.58, 59.33, 61.99]
-    }
-    
-    df = pd.concat([df, pd.DataFrame(other_spirits)], ignore_index=True)
-    
-    logger.debug(f"Created dataset with {len(df)} bottles")
+    logger.debug(f"Loaded {len(df)} bottles from JSON dataset")
     
     # Add region based on spirit_type
     df['region'] = 'Unknown'
