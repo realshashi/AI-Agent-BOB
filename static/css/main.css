@@ -98,9 +98,7 @@ body {
     background-color: var(--baxus-gold) !important;
 }
 
-.badge.bg-success {
-    background-color: var(--baxus-teal) !important;
-}
+
 
 /* Preference badges */
 .preference-badge {
