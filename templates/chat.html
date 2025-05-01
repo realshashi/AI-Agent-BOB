@@ -10,7 +10,7 @@
                 <div class="card-header bg-dark text-white d-flex align-items-center">
                     <div class="d-flex align-items-center">
                         <div class="avatar-container me-3">
-                            <img src="{{ url_for('static', filename='images/bob-avatar.png') }}" 
+                            <img src="{{ url_for('static', filename='images/bob-avatar.svg') }}" 
                                  alt="Bob the Whisky Expert" 
                                  class="rounded-circle" 
                                  width="40" height="40"
@@ -43,12 +43,15 @@
                         </button>
                     </form>
                     
-                    <div class="mt-3 small text-muted">
+                    <div class="mt-3 small text-muted d-flex justify-content-between">
                         <p>Suggestions: 
                             <a href="#" class="suggestion-link">What whisky should I try if I like smoky flavors?</a> •
                             <a href="#" class="suggestion-link">Tell me about Japanese whisky</a> •
                             <a href="#" class="suggestion-link">Good whisky under $50?</a>
                         </p>
+                        <button id="reset-chat" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-repeat"></i> Reset Chat
+                        </button>
                     </div>
                 </div>
             </div>
@@ -142,6 +145,37 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             userInput.value = this.textContent;
             chatForm.dispatchEvent(new Event('submit'));
+        });
+    });
+    
+    // Handle reset chat button
+    document.getElementById('reset-chat').addEventListener('click', function() {
+        // Clear chat messages except the first welcome message
+        while (chatMessages.childNodes.length > 1) {
+            chatMessages.removeChild(chatMessages.lastChild);
+        }
+        
+        // Reset chat history on server
+        fetch('/chat/reset', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show confirmation message
+                const resetMessage = document.createElement('div');
+                resetMessage.className = 'alert alert-info small text-center my-2';
+                resetMessage.textContent = 'Chat history has been reset';
+                chatMessages.appendChild(resetMessage);
+                
+                // Remove the confirmation after 3 seconds
+                setTimeout(() => {
+                    chatMessages.removeChild(resetMessage);
+                }, 3000);
+            }
         });
     });
     
