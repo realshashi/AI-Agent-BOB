@@ -1,21 +1,26 @@
 import os
 import logging
-from dotenv import load_dotenv
 
 # Set up logging for Vercel environment
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-try:
-    # Load environment variables from .env file (for local development)
-    load_dotenv()
-    logger.info("Environment variables loaded from .env file")
-except Exception as e:
-    logger.warning(f"Could not load .env file: {str(e)}")
-
 # Check for Vercel environment
-if os.environ.get('VERCEL') == '1':
+is_vercel = os.environ.get('VERCEL') == '1'
+if is_vercel:
     logger.info("Running in Vercel serverless environment")
+else:
+    # Only load dotenv in non-Vercel environments
+    try:
+        # Try to import dotenv for local development
+        from dotenv import load_dotenv
+        # Load environment variables from .env file
+        load_dotenv()
+        logger.info("Environment variables loaded from .env file")
+    except ImportError:
+        logger.warning("python-dotenv package not available, skipping .env loading")
+    except Exception as e:
+        logger.warning(f"Could not load .env file: {str(e)}")
 
 # Import Flask app after loading environment variables
 try:
