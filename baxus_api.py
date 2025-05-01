@@ -4,7 +4,7 @@ from typing import Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
 
-BAXUS_API_BASE_URL = "http://services.baxus.co/api"
+BAXUS_API_BASE_URL = "https://services.baxus.co/api"
 
 def get_user_bar_data(username: str) -> Optional[Dict[str, Any]]:
     """
@@ -26,7 +26,8 @@ def get_user_bar_data(username: str) -> Optional[Dict[str, Any]]:
         if response.status_code == 200:
             user_data = response.json()
             logger.debug(f"Successfully retrieved data for user: {username}")
-            return user_data
+            # Format the response for our app expecting a specific structure
+            return {"bar": user_data}
         else:
             logger.error(f"Failed to retrieve user data: Status {response.status_code}, Response: {response.text}")
             return None
