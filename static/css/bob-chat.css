@@ -26,11 +26,15 @@
     height: 380px;
     display: flex;
     flex-direction: column;
-    transition: height 0.3s ease;
+    transition: all 0.3s ease;
+    overflow: hidden;
 }
 
 .bob-chat-body.collapsed {
-    height: 0;
+    height: 0 !important;
+    padding: 0;
+    margin: 0;
+    border: none;
 }
 
 .bob-messages {

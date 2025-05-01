@@ -176,7 +176,7 @@
             <span class="badge bg-light text-dark ms-2">@{{ username }}</span>
             {% endif %}
         </div>
-        <button class="btn btn-sm btn-link text-white p-0" id="bobChatToggle">
+        <button type="button" class="btn btn-sm btn-link text-white p-0" id="bobChatToggle">
             <i class="fas fa-minus"></i>
         </button>
     </div>
@@ -208,7 +208,7 @@
                         <li><a class="dropdown-item suggestion-link" href="#">Compare bourbon and scotch</a></li>
                     </ul>
                 </div>
-                <button id="resetBobChat" class="btn btn-sm btn-link text-muted p-0">
+                <button type="button" id="resetBobChat" class="btn btn-sm btn-link text-muted p-0">
                     <i class="fas fa-redo-alt me-1"></i>Reset
                 </button>
             </div>
@@ -219,7 +219,10 @@
 
 {% block extra_js %}
 <script>
+// Chat widget functionality
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("Chat widget initializing");
+    
     // Chat widget elements
     const chatWidget = document.getElementById('bobChatWidget');
     const chatHeader = document.getElementById('bobChatHeader');
@@ -230,103 +233,143 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('bobMessages');
     const resetButton = document.getElementById('resetBobChat');
     
-    // Toggle chat widget
+    console.log("Elements found:", {
+        chatWidget: !!chatWidget,
+        chatHeader: !!chatHeader,
+        chatBody: !!chatBody,
+        chatToggle: !!chatToggle,
+        chatForm: !!chatForm,
+        chatInput: !!chatInput,
+        chatMessages: !!chatMessages,
+        resetButton: !!resetButton
+    });
+    
+    // Toggle chat body visibility when clicking header (except the toggle button)
     chatHeader.addEventListener('click', function(e) {
-        if (e.target.id !== 'bobChatToggle' && !e.target.closest('#bobChatToggle')) {
+        // Prevent the handler from firing when clicking the toggle button
+        if (e.target !== chatToggle && !chatToggle.contains(e.target)) {
+            console.log("Header clicked (not toggle button)");
             toggleChatWidget();
         }
     });
     
-    chatToggle.addEventListener('click', function() {
+    // Toggle chat when clicking the toggle button specifically
+    chatToggle.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent the header click handler from firing
+        console.log("Toggle button clicked");
         toggleChatWidget();
     });
     
+    // Function to toggle the chat body visibility
     function toggleChatWidget() {
-        const isOpen = !chatBody.classList.contains('collapsed');
-        
-        if (isOpen) {
-            chatBody.classList.add('collapsed');
-            chatToggle.innerHTML = '<i class="fas fa-plus"></i>';
-        } else {
+        console.log("Toggling chat widget");
+        if (chatBody.classList.contains('collapsed')) {
+            console.log("Opening chat widget");
             chatBody.classList.remove('collapsed');
             chatToggle.innerHTML = '<i class="fas fa-minus"></i>';
-            chatInput.focus();
+            // Focus input when opening
+            setTimeout(() => chatInput.focus(), 300);
+        } else {
+            console.log("Closing chat widget");
+            chatBody.classList.add('collapsed');
+            chatToggle.innerHTML = '<i class="fas fa-plus"></i>';
         }
     }
     
     // Handle form submission
-    chatForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const message = chatInput.value.trim();
-        if (!message) return;
-        
-        // Add user message
-        addMessage(message, 'user');
-        chatInput.value = '';
-        
-        // Show typing indicator
-        showTypingIndicator();
-        
-        // Send message to server
-        fetch('/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: message })
-        })
-        .then(res => res.json())
-        .then(data => {
-            // Remove typing indicator and add bot response
-            removeTypingIndicator();
-            addMessage(data.response, 'bot');
-        })
-        .catch(err => {
-            removeTypingIndicator();
-            addMessage('Sorry, I encountered a problem. Please try again.', 'bot');
-            console.error(err);
+    if (chatForm) {
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log("Form submitted");
+            
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            console.log("Sending message:", message);
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            chatInput.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Send message to server
+            fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => {
+                console.log("Server response received:", response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log("Response data:", data);
+                // Hide typing indicator
+                removeTypingIndicator();
+                // Add bot response
+                addMessage(data.response, 'bot');
+            })
+            .catch(error => {
+                console.error("Error sending message:", error);
+                removeTypingIndicator();
+                addMessage('Sorry, I encountered a problem. Please try again.', 'bot');
+            });
         });
-    });
+    }
     
     // Handle suggestion links
     document.querySelectorAll('.suggestion-link').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
+            console.log("Suggestion clicked:", this.textContent);
             chatInput.value = this.textContent;
             chatForm.dispatchEvent(new Event('submit'));
         });
     });
     
-    // Reset chat
-    resetButton.addEventListener('click', function() {
-        // Clear all messages except the first welcome message
-        while (chatMessages.children.length > 1) {
-            chatMessages.removeChild(chatMessages.lastChild);
-        }
-        
-        // Reset server-side chat history
-        fetch('/chat/reset', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // Show reset confirmation
-                const resetMsg = document.createElement('div');
-                resetMsg.className = 'system-message';
-                resetMsg.textContent = 'Chat history has been reset';
-                chatMessages.appendChild(resetMsg);
-                
-                // Remove after 2 seconds
-                setTimeout(() => {
-                    chatMessages.removeChild(resetMsg);
-                }, 2000);
+    // Reset chat button
+    if (resetButton) {
+        resetButton.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent the header click handler from firing
+            console.log("Reset button clicked");
+            
+            // Clear all messages except the first welcome message
+            while (chatMessages.children.length > 1) {
+                chatMessages.removeChild(chatMessages.lastChild);
             }
+            
+            // Reset server-side chat history
+            fetch('/chat/reset', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Reset response:", data);
+                if (data.success) {
+                    // Show reset confirmation
+                    const resetMsg = document.createElement('div');
+                    resetMsg.className = 'system-message';
+                    resetMsg.textContent = 'Chat history has been reset';
+                    chatMessages.appendChild(resetMsg);
+                    
+                    // Remove confirmation after 2 seconds
+                    setTimeout(() => {
+                        chatMessages.removeChild(resetMsg);
+                    }, 2000);
+                }
+            })
+            .catch(error => {
+                console.error("Error resetting chat:", error);
+            });
         });
-    });
+    }
     
     // Helper functions
     function addMessage(content, type) {
+        console.log(`Adding ${type} message:`, content.substring(0, 30) + "...");
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}-message`;
         
@@ -350,6 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function showTypingIndicator() {
+        console.log("Showing typing indicator");
         const indicator = document.createElement('div');
         indicator.className = 'message bot-message typing-indicator';
         indicator.innerHTML = '<span></span><span></span><span></span>';
@@ -359,6 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function removeTypingIndicator() {
+        console.log("Removing typing indicator");
         const indicator = document.getElementById('typingIndicator');
         if (indicator) {
             chatMessages.removeChild(indicator);
@@ -368,6 +413,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function scrollToBottom() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+    
+    // Initialize with collapsed state (optional)
+    // Uncomment the next line if you want the chat to start collapsed
+    // chatBody.classList.add('collapsed');
+    // chatToggle.innerHTML = '<i class="fas fa-plus"></i>';
+    
+    console.log("Chat widget initialized");
 });
 </script>
 {% endblock %}
