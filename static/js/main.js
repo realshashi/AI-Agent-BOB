@@ -33,55 +33,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const flavorContainers = document.querySelectorAll('.flavor-profile-container');
     flavorContainers.forEach(container => {
         const flavorData = JSON.parse(container.dataset.flavors || '{}');
-        const flavorProfileDiv = document.createElement('div');
-        flavorProfileDiv.className = 'flavor-profile';
         
+        // Clear any existing content
+        container.innerHTML = '';
+        
+        // Create tag-based flavor profile visualization
         for (const [flavor, value] of Object.entries(flavorData)) {
             if (value > 0) {
-                const flavorDiv = document.createElement('div');
-                flavorDiv.className = 'flavor-item';
+                // Skip values that are too low to be meaningful
+                if (value < 10) continue;
                 
-                const label = document.createElement('small');
-                label.className = 'text-muted';
-                label.textContent = flavor;
+                const flavorTag = document.createElement('span');
+                flavorTag.className = 'flavor-tag';
                 
-                const barContainer = document.createElement('div');
-                barContainer.className = 'progress w-100';
-                barContainer.style.height = '8px';
-                
-                const bar = document.createElement('div');
-                bar.className = 'progress-bar';
-                bar.style.width = `${Math.min(100, value)}%`;
-                bar.setAttribute('title', `${flavor}: ${Math.round(value)}%`);
-                
-                // Set different colors for different flavors
-                switch(flavor.toLowerCase()) {
-                    case 'peated':
-                    case 'smoky':
-                        bar.classList.add('bg-danger');
-                        break;
-                    case 'sherried':
-                    case 'fruity':
-                        bar.classList.add('bg-success');
-                        break;
-                    case 'spicy':
-                        bar.classList.add('bg-warning');
-                        break;
-                    case 'vanilla':
-                    case 'caramel':
-                        bar.classList.add('bg-info');
-                        break;
-                    default:
-                        bar.classList.add('bg-primary');
+                // Determine level based on value
+                let level = 'low';
+                if (value > 70) {
+                    level = 'high';
+                } else if (value > 35) {
+                    level = 'medium';
                 }
                 
-                barContainer.appendChild(bar);
-                flavorDiv.appendChild(label);
-                flavorDiv.appendChild(barContainer);
-                flavorProfileDiv.appendChild(flavorDiv);
+                flavorTag.setAttribute('data-level', level);
+                flavorTag.textContent = flavor.charAt(0).toUpperCase() + flavor.slice(1);
+                container.appendChild(flavorTag);
             }
         }
         
-        container.appendChild(flavorProfileDiv);
+        // If there are no flavor tags, add a message
+        if (container.children.length === 0) {
+            const noFlavorMsg = document.createElement('p');
+            noFlavorMsg.className = 'text-muted small mb-0';
+            noFlavorMsg.textContent = 'No flavor profile data available';
+            container.appendChild(noFlavorMsg);
+        }
     });
 });
