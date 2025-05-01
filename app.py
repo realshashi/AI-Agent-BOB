@@ -15,12 +15,24 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
     logger.warning("OPENAI_API_KEY is not set. Chat functionality will be limited.")
 
+# Check if we're running on Vercel
+IS_VERCEL = os.environ.get('VERCEL') == '1'
+if IS_VERCEL:
+    logger.info("Running on Vercel serverless environment")
+
 # Initialize Flask app
 app = Flask(__name__)
+
+# Set secure secret key for sessions
 app.secret_key = os.environ.get("SECRET_KEY", os.environ.get("SESSION_SECRET", "bob-whisky-expert-secret"))
 
+# Configure session cookie for Vercel deployment
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
 # Set Flask environment configuration
-app.config['DEBUG'] = os.environ.get('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
+app.config['DEBUG'] = not IS_VERCEL and os.environ.get('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

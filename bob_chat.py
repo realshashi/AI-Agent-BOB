@@ -14,20 +14,34 @@ logger = logging.getLogger(__name__)
 RATE_LIMIT = 3  # 3 requests per minute
 request_timestamps = []
 
-# Initialize SQLite for persistent caching
+# Memory-based cache for Vercel's serverless environment
+# This is needed because Vercel's filesystem is read-only in production
+memory_cache = {}
+
+# Initialize SQLite for persistent caching in development only
 def init_cache_db():
-    conn = sqlite3.connect('bob_cache.db')
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS response_cache (
-            question_hash TEXT PRIMARY KEY,
-            question TEXT,
-            answer TEXT,
-            created_at TIMESTAMP
-        )
-    ''')
-    conn.commit()
-    conn.close()
+    try:
+        # Check if we're in a serverless environment (like Vercel)
+        is_vercel = os.environ.get('VERCEL') == '1'
+        
+        if not is_vercel:
+            conn = sqlite3.connect('bob_cache.db')
+            c = conn.cursor()
+            c.execute('''
+                CREATE TABLE IF NOT EXISTS response_cache (
+                    question_hash TEXT PRIMARY KEY,
+                    question TEXT,
+                    answer TEXT,
+                    created_at TIMESTAMP
+                )
+            ''')
+            conn.commit()
+            conn.close()
+            logger.info("SQLite cache initialized for development")
+        else:
+            logger.info("Running in serverless mode - using memory cache only")
+    except Exception as e:
+        logger.warning(f"Could not initialize SQLite DB: {str(e)}. Using memory cache only.")
 
 # Initialize cache DB
 init_cache_db()
@@ -50,14 +64,29 @@ def check_rate_limit():
 
 # Get response from cache
 def get_from_cache(question_hash):
-    conn = sqlite3.connect('bob_cache.db')
-    c = conn.cursor()
-    c.execute('SELECT answer FROM response_cache WHERE question_hash = ?', (question_hash,))
-    result = c.fetchone()
-    conn.close()
-    if result:
-        logger.info(f"Cache hit for hash: {question_hash}")
-        return result[0]
+    # First check memory cache
+    if question_hash in memory_cache:
+        logger.info(f"Memory cache hit for hash: {question_hash}")
+        return memory_cache[question_hash]
+    
+    # Then try SQLite cache if not in serverless mode
+    is_vercel = os.environ.get('VERCEL') == '1'
+    if not is_vercel:
+        try:
+            conn = sqlite3.connect('bob_cache.db')
+            c = conn.cursor()
+            c.execute('SELECT answer FROM response_cache WHERE question_hash = ?', (question_hash,))
+            result = c.fetchone()
+            conn.close()
+            
+            if result:
+                # Also store in memory cache for future lookups
+                memory_cache[question_hash] = result[0]
+                logger.info(f"SQLite cache hit for hash: {question_hash}")
+                return result[0]
+        except Exception as e:
+            logger.warning(f"Error retrieving from SQLite cache: {str(e)}")
+    
     return None
 
 # Add response to cache
@@ -65,15 +94,23 @@ def add_to_cache(question: str, answer: str) -> None:
     """Add a question and answer to the cache"""
     question_hash = hashlib.md5(question.lower().strip().encode()).hexdigest()
     
-    # Save to SQLite cache
-    conn = sqlite3.connect('bob_cache.db')
-    c = conn.cursor()
-    c.execute(
-        'INSERT OR REPLACE INTO response_cache (question_hash, question, answer, created_at) VALUES (?, ?, ?, ?)',
-        (question_hash, question, answer, datetime.now())
-    )
-    conn.commit()
-    conn.close()
+    # Always add to memory cache
+    memory_cache[question_hash] = answer
+    
+    # Also try to add to SQLite if not in serverless mode
+    is_vercel = os.environ.get('VERCEL') == '1'
+    if not is_vercel:
+        try:
+            conn = sqlite3.connect('bob_cache.db')
+            c = conn.cursor()
+            c.execute(
+                'INSERT OR REPLACE INTO response_cache (question_hash, question, answer, created_at) VALUES (?, ?, ?, ?)',
+                (question_hash, question, answer, datetime.now())
+            )
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            logger.warning(f"Error saving to SQLite cache: {str(e)}")
     
     logger.info(f"Added to cache: {question_hash} - Question: {question}")
 
