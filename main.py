@@ -1,3 +1,10 @@
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Import Flask app after loading environment variables
 from app import app
 
 if __name__ == "__main__":

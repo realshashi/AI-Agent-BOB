@@ -17,7 +17,10 @@ if not OPENAI_API_KEY:
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "bob-whisky-expert-secret")
+app.secret_key = os.environ.get("SECRET_KEY", os.environ.get("SESSION_SECRET", "bob-whisky-expert-secret"))
+
+# Set Flask environment configuration
+app.config['DEBUG'] = os.environ.get('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
