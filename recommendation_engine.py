@@ -58,43 +58,48 @@ def analyze_preferences(user_data: Dict[str, Any]) -> Dict[str, Any]:
     if preferences['collection_size'] == 0:
         return preferences
     
-    # Get the bottle dataset for reference
-    bottle_df = get_bottle_dataset()
-    
     # Process each bottle in the collection
     total_price = 0
     price_ceiling = 0
     
+    logger.debug(f"Processing {len(collection)} bottles from user's collection")
+    
     for bottle in collection:
-        bottle_id = bottle.get('bottle_id')
-        if not bottle_id:
-            continue
-            
-        # Find this bottle in our dataset
-        bottle_info = bottle_df[bottle_df['id'] == bottle_id]
-        if bottle_info.empty:
+        # Each item in the collection has a 'product' field with bottle details
+        product = bottle.get('product')
+        if not product:
+            logger.debug("No product information found in bottle entry")
             continue
         
-        bottle_info = bottle_info.iloc[0]
+        # Extract relevant information from the product
+        product_id = product.get('id')
+        if not product_id:
+            logger.debug("No product ID found")
+            continue
         
-        # Update region preferences
-        region = bottle_info.get('region')
-        if region:
-            preferences['preferred_regions'][region] = preferences['preferred_regions'].get(region, 0) + 1
-        
-        # Update spirit type preferences
-        spirit_type = bottle_info.get('spirit_type')
+        # Extract spirit type (e.g., Bourbon, Single Malt, etc.)
+        spirit_type = product.get('spirit')
         if spirit_type:
             preferences['spirit_types'][spirit_type] = preferences['spirit_types'].get(spirit_type, 0) + 1
         
-        # Update flavor profile preferences
-        for flavor in preferences['flavor_profiles'].keys():
-            profile_key = f'flavor_profile_{flavor}'
-            if profile_key in bottle_info:
-                preferences['flavor_profiles'][flavor] += bottle_info[profile_key]
+        # Extract region based on spirit type
+        region = None
+        if "Scotch" in str(spirit_type):
+            region = "Scotland"
+        elif spirit_type == "Bourbon" or spirit_type == "Rye":
+            region = "America"
+        elif spirit_type == "Japanese Whisky":
+            region = "Japan"
+        elif spirit_type == "Irish Whiskey":
+            region = "Ireland"
+        elif spirit_type == "Canadian Whisky":
+            region = "Canada"
         
-        # Update price range preferences
-        price = bottle_info.get('msrp', 0)
+        if region:
+            preferences['preferred_regions'][region] = preferences['preferred_regions'].get(region, 0) + 1
+        
+        # Update price range preferences based on average_msrp
+        price = product.get('average_msrp', 0)
         if price:
             total_price += price
             price_ceiling = max(price_ceiling, price)
@@ -109,19 +114,34 @@ def analyze_preferences(user_data: Dict[str, Any]) -> Dict[str, Any]:
                 preferences['price_ranges']['luxury'] += 1
         
         # Update brand preferences
-        brand = bottle_info.get('brand_id')
+        brand = product.get('brand')
         if brand:
             preferences['brand_preferences'][brand] = preferences['brand_preferences'].get(brand, 0) + 1
         
-        # Update ABV preferences
-        abv = bottle_info.get('abv', 0)
-        if abv:
+        # Update ABV preferences based on proof
+        proof = product.get('proof', 0)
+        if proof:
+            abv = proof / 2  # Convert proof to ABV
             if abv < 43:
                 preferences['abv_preferences']['low'] += 1
             elif abv <= 50:
                 preferences['abv_preferences']['medium'] += 1
             else:
                 preferences['abv_preferences']['high'] += 1
+                
+        # For flavor profiles, derive from spirit types since real flavor data is not in API
+        # This is a simplified approach - in a real implementation we'd use machine learning or a database
+        if spirit_type == "Bourbon":
+            preferences['flavor_profiles']['vanilla'] += 60
+            preferences['flavor_profiles']['caramel'] += 70
+            preferences['flavor_profiles']['spicy'] += 40
+        elif "Scotch" in str(spirit_type):
+            preferences['flavor_profiles']['peated'] += 40
+            preferences['flavor_profiles']['smoky'] += 30
+        elif spirit_type == "Rye":
+            preferences['flavor_profiles']['spicy'] += 80
+        elif spirit_type == "Gin":
+            preferences['flavor_profiles']['fruity'] += 50
     
     # Calculate average bottle price
     if preferences['collection_size'] > 0:
@@ -162,7 +182,9 @@ def generate_recommendations(preferences: Dict[str, Any], user_data: Dict[str, A
     # Extract user's collection IDs to avoid recommending bottles they already have
     collection_ids = []
     if 'bar' in user_data and user_data['bar']:
-        collection_ids = [bottle.get('bottle_id') for bottle in user_data['bar'] if bottle.get('bottle_id')]
+        collection_ids = [bottle.get('release_id') for bottle in user_data['bar'] if bottle.get('release_id')]
+    
+    logger.debug(f"Found {len(collection_ids)} bottles in user collection: {collection_ids[:5]}...")
     
     # Remove bottles already in the user's collection
     candidate_bottles = bottle_df[~bottle_df['id'].isin(collection_ids)].copy()
@@ -322,7 +344,7 @@ def generate_recommendation_explanation(bottle: Dict[str, Any],
         # Find example bottle from user's collection with same region
         similar_region_bottle = None
         for user_bottle in user_data.get('bar', []):
-            bottle_id = user_bottle.get('bottle_id')
+            bottle_id = user_bottle.get('release_id')
             if bottle_id:
                 bottle_df = get_bottle_dataset()
                 bottle_info = bottle_df[bottle_df['id'] == bottle_id]
