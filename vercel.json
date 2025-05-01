@@ -9,9 +9,25 @@
         "installCommand": "pip install -r vercel_requirements.txt",
         "maxDuration": 60
       }
+    },
+    {
+      "src": "api/whisky.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.11",
+        "maxDuration": 60
+      }
     }
   ],
   "routes": [
+    {
+      "src": "/api/chat",
+      "dest": "api/whisky.py"
+    },
+    {
+      "src": "/api/status",
+      "dest": "api/whisky.py"
+    },
     {
       "src": "/(.*)",
       "dest": "api/index.py"
@@ -25,6 +41,10 @@
     "api/index.py": {
       "memory": 1024,
       "maxDuration": 60
+    },
+    "api/whisky.py": {
+      "memory": 1024,
+      "maxDuration": 10
     }
   }
 }

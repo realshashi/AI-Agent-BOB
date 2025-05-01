@@ -124,19 +124,29 @@ def generate_cache_key(messages: List[Dict[str, str]]) -> Optional[str]:
     return None
 
 # Initialize the OpenAI client (lazily to avoid API calls unless needed)
-api_key = os.environ.get("OPENAI_API_KEY")
 client = None
 
 def get_openai_client():
     """Get or initialize the OpenAI client"""
-    global client, api_key
+    global client
+    
+    # Only create the client once
     if client is None:
+        # Get the API key from environment (checking each time to handle serverless environment)
+        api_key = os.environ.get("OPENAI_API_KEY")
+        
         if not api_key:
             logger.error("OpenAI API key not found in environment variables")
             return None
         else:
-            logger.info("OpenAI API key found in environment variables")
-            client = OpenAI(api_key=api_key)
+            logger.info("OpenAI API key found in environment")
+            try:
+                client = OpenAI(api_key=api_key)
+                logger.info("OpenAI client initialized successfully")
+            except Exception as e:
+                logger.error(f"Error initializing OpenAI client: {str(e)}")
+                return None
+    
     return client
 
 # BOB's personality and knowledge system prompt
