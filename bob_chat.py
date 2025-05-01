@@ -111,5 +111,10 @@ def chat_with_bob(messages: List[Dict[str, str]], username: Optional[str] = None
         return response.choices[0].message.content
     
     except Exception as e:
-        logger.exception(f"Error calling OpenAI API: {str(e)}")
-        return "I apologize, but I'm having trouble connecting to my whisky knowledge base at the moment. Please try again shortly."
+        error_str = str(e)
+        logger.exception(f"Error calling OpenAI API: {error_str}")
+        
+        if "insufficient_quota" in error_str or "exceeded your current quota" in error_str:
+            return "I apologize, but I'm not available right now due to API quota limitations. Please contact the administrator to update the OpenAI API key with additional credits."
+        else:
+            return "I apologize, but I'm having trouble connecting to my whisky knowledge base at the moment. Please try again shortly."
