@@ -326,7 +326,7 @@ def generate_recommendation_explanation(bottle: Dict[str, Any],
     Generates a personalized explanation for why a bottle is recommended.
     
     Args:
-        bottle: Dictionary containing bottle information
+        bottle: Dictionary containing bottle information from our dataset
         preferences: Dictionary of user preferences
         user_data: Original user data from BAXUS API
         
@@ -344,13 +344,26 @@ def generate_recommendation_explanation(bottle: Dict[str, Any],
         # Find example bottle from user's collection with same region
         similar_region_bottle = None
         for user_bottle in user_data.get('bar', []):
-            bottle_id = user_bottle.get('release_id')
-            if bottle_id:
-                bottle_df = get_bottle_dataset()
-                bottle_info = bottle_df[bottle_df['id'] == bottle_id]
-                if not bottle_info.empty and bottle_info.iloc[0].get('region') == region:
-                    similar_region_bottle = bottle_info.iloc[0].get('name')
-                    break
+            product = user_bottle.get('product')
+            if product:
+                # Determine region of user's bottle based on spirit type
+                user_region = None
+                spirit = product.get('spirit')
+                if spirit:
+                    if "Scotch" in str(spirit):
+                        user_region = "Scotland"
+                    elif spirit == "Bourbon" or spirit == "Rye":
+                        user_region = "America"
+                    elif spirit == "Japanese Whisky":
+                        user_region = "Japan"
+                    elif spirit == "Irish Whiskey":
+                        user_region = "Ireland"
+                    elif spirit == "Canadian Whisky":
+                        user_region = "Canada"
+                    
+                    if user_region == region:
+                        similar_region_bottle = product.get('name')
+                        break
         
         if similar_region_bottle:
             explanation_parts.append(f"Like your {similar_region_bottle}, this is also from {region}.")
@@ -391,12 +404,15 @@ def generate_recommendation_explanation(bottle: Dict[str, Any],
     # Price explanation
     price = bottle.get('msrp', 0)
     avg_price = preferences.get('average_bottle_price', 0)
-    if price <= avg_price * 0.8:
-        explanation_parts.append(f"At ${price:.2f}, this is a good value compared to your collection average.")
-    elif price <= avg_price * 1.2:
-        explanation_parts.append(f"This is priced similarly to most bottles in your collection.")
+    if avg_price > 0:
+        if price <= avg_price * 0.8:
+            explanation_parts.append(f"At ${price:.2f}, this is a good value compared to your collection average.")
+        elif price <= avg_price * 1.2:
+            explanation_parts.append(f"This is priced similarly to most bottles in your collection.")
+        else:
+            explanation_parts.append(f"This premium offering is slightly above your usual price range but worth considering.")
     else:
-        explanation_parts.append(f"This premium offering is slightly above your usual price range but worth considering.")
+        explanation_parts.append(f"At ${price:.2f}, this is a bottle worth considering for your collection.")
     
     # Rating/score explanation
     score = bottle.get('total_score', 0)
@@ -409,5 +425,8 @@ def generate_recommendation_explanation(bottle: Dict[str, Any],
     
     # Combine all explanations
     explanation = " ".join(explanation_parts)
+    
+    if not explanation:
+        explanation = "This bottle would make a nice addition to your whisky collection."
     
     return explanation
