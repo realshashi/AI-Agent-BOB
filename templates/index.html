@@ -5,27 +5,27 @@
 {% block content %}
 <div class="hero-section text-center">
     <div class="container">
-        <h1 class="display-4 fw-bold mb-4">Welcome to <span class="text-warning">Bob</span> the Whisky Expert</h1>
+        <h1 class="display-4 fw-bold mb-4">Welcome to <span class="text-success">Bob</span> the Whisky Expert</h1>
         <p class="lead mb-5">I'll analyze your BAXUS whisky collection and provide personalized recommendations to enhance your experience.</p>
         
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card bg-dark">
+                <div class="card border">
                     <div class="card-body">
-                        <h3 class="card-title mb-4">Enter Your BAXUS Username</h3>
+                        <h3 class="card-title mb-4 text-dark">Enter Your BAXUS Username</h3>
                         
                         <form id="username-form" action="{{ url_for('index') }}" method="post">
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control" id="username" name="username" placeholder="Username">
                                 <label for="username">BAXUS Username</label>
                             </div>
-                            <button type="submit" class="btn btn-warning btn-lg w-100">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
                                 <i class="fas fa-search me-2"></i>Get Recommendations
                             </button>
                         </form>
                         
                         <div id="loading-spinner" class="loading-spinner">
-                            <div class="spinner-border text-warning" role="status">
+                            <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Loading...</span>
                             </div>
                             <p class="mt-2">Analyzing your collection...</p>
@@ -42,7 +42,7 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <i class="fas fa-glass-whiskey fa-3x text-warning mb-3"></i>
+                    <i class="fas fa-glass-whiskey fa-3x text-success mb-3"></i>
                     <h3 class="card-title">Collection Analysis</h3>
                     <p class="card-text">I'll analyze your current whisky collection to understand your preferences, including favorite regions, flavor profiles, and price points.</p>
                 </div>
@@ -52,7 +52,7 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <i class="fas fa-brain fa-3x text-warning mb-3"></i>
+                    <i class="fas fa-brain fa-3x text-success mb-3"></i>
                     <h3 class="card-title">Expert Recommendations</h3>
                     <p class="card-text">Using advanced algorithms and whisky expertise, I'll suggest bottles that match your taste and enhance your collection.</p>
                 </div>
@@ -62,7 +62,7 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <i class="fas fa-chart-line fa-3x text-warning mb-3"></i>
+                    <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
                     <h3 class="card-title">Personalized Insights</h3>
                     <p class="card-text">Discover your taste profile patterns and get detailed explanations for each recommendation tailored to your preferences.</p>
                 </div>
@@ -76,41 +76,41 @@
         </div>
         
         <div class="col-md-3 mb-4">
-            <div class="card bg-dark h-100">
+            <div class="card bg-light h-100 border">
                 <div class="card-body text-center">
-                    <div class="display-4 mb-2">1</div>
-                    <h5 class="card-title">Enter Username</h5>
-                    <p class="card-text small">Provide your BAXUS username to access your collection</p>
+                    <div class="display-4 mb-2 text-success">1</div>
+                    <h5 class="card-title text-dark">Enter Username</h5>
+                    <p class="card-text small text-muted">Provide your BAXUS username to access your collection</p>
                 </div>
             </div>
         </div>
         
         <div class="col-md-3 mb-4">
-            <div class="card bg-dark h-100">
+            <div class="card bg-light h-100 border">
                 <div class="card-body text-center">
-                    <div class="display-4 mb-2">2</div>
-                    <h5 class="card-title">Analyze Collection</h5>
-                    <p class="card-text small">Bob analyzes your bottle preferences and patterns</p>
+                    <div class="display-4 mb-2 text-success">2</div>
+                    <h5 class="card-title text-dark">Analyze Collection</h5>
+                    <p class="card-text small text-muted">Bob analyzes your bottle preferences and patterns</p>
                 </div>
             </div>
         </div>
         
         <div class="col-md-3 mb-4">
-            <div class="card bg-dark h-100">
+            <div class="card bg-light h-100 border">
                 <div class="card-body text-center">
-                    <div class="display-4 mb-2">3</div>
-                    <h5 class="card-title">Generate Recommendations</h5>
-                    <p class="card-text small">Personalized bottle suggestions are created</p>
+                    <div class="display-4 mb-2 text-success">3</div>
+                    <h5 class="card-title text-dark">Generate Recommendations</h5>
+                    <p class="card-text small text-muted">Personalized bottle suggestions are created</p>
                 </div>
             </div>
         </div>
         
         <div class="col-md-3 mb-4">
-            <div class="card bg-dark h-100">
+            <div class="card bg-light h-100 border">
                 <div class="card-body text-center">
-                    <div class="display-4 mb-2">4</div>
-                    <h5 class="card-title">Discover New Whiskies</h5>
-                    <p class="card-text small">Explore recommended bottles with detailed insights</p>
+                    <div class="display-4 mb-2 text-success">4</div>
+                    <h5 class="card-title text-dark">Discover New Whiskies</h5>
+                    <p class="card-text small text-muted">Explore recommended bottles with detailed insights</p>
                 </div>
             </div>
         </div>
