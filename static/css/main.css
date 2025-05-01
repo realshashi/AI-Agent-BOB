@@ -1,0 +1,52 @@
+/* Main styles for Bob the Whisky Expert */
+
+/* Whisky card styling */
+.whisky-card {
+    background-color: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.whisky-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.bottle-image {
+    max-height: 200px;
+    object-fit: contain;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    transition: transform 0.3s;
+}
+
+.bottle-image:hover {
+    transform: scale(1.05);
+}
+
+.recommendation-reason {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-left: 3px solid #ffc107;
+    padding: 10px 15px;
+    margin-top: 15px;
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Preference badges */
+.preference-badge {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    font-size: 0.85rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .bottle-image {
+        max-height: 150px;
+        margin-bottom: 15px;
+    }
+}

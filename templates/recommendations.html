@@ -108,47 +108,60 @@
         <div class="col-lg-6 mb-4">
             <div class="card whisky-card">
                 <div class="card-body">
-                    <h3 class="card-title">{{ bottle.name }}</h3>
-                    
-                    <div class="d-flex justify-content-between mb-3">
-                        <div>
-                            <span class="badge bg-primary">{{ bottle.spirit_type }}</span>
-                            <span class="badge bg-secondary">{{ bottle.region }}</span>
-                            <span class="badge bg-info">{{ bottle.abv }}% ABV</span>
-                        </div>
-                        <div>
-                            {% if bottle.total_score %}
-                                <span class="badge bg-warning" data-bs-toggle="tooltip" title="Rating Score">
-                                    <i class="fas fa-star me-1"></i>{{ bottle.total_score|round(1) }}
-                                </span>
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            {% if bottle.image_url %}
+                            <img src="{{ bottle.image_url }}" alt="{{ bottle.name }}" class="img-fluid rounded bottle-image mb-3" style="max-height: 200px;">
+                            {% else %}
+                            <div class="no-image-placeholder rounded" style="height: 200px; background-color: #333; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-wine-bottle fa-3x text-muted"></i>
+                            </div>
                             {% endif %}
                         </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <p class="mb-1"><strong>MSRP:</strong> ${{ bottle.msrp|round(2) }}</p>
-                            {% if bottle.fair_price %}
-                                <p class="mb-1"><strong>Fair Price:</strong> ${{ bottle.fair_price|round(2) }}</p>
-                            {% endif %}
-                        </div>
-                        <div class="col-6">
-                            <div class="flavor-profile-container" 
-                                 data-flavors='{
-                                    "peated": {{ bottle.flavor_profile_peated|default(0) }},
-                                    "sherried": {{ bottle.flavor_profile_sherried|default(0) }},
-                                    "fruity": {{ bottle.flavor_profile_fruity|default(0) }},
-                                    "spicy": {{ bottle.flavor_profile_spicy|default(0) }},
-                                    "smoky": {{ bottle.flavor_profile_smoky|default(0) }},
-                                    "vanilla": {{ bottle.flavor_profile_vanilla|default(0) }},
-                                    "caramel": {{ bottle.flavor_profile_caramel|default(0) }}
-                                }'>
-                                <!-- JS will populate this -->
+                        <div class="col-md-8">
+                            <h3 class="card-title">{{ bottle.name }}</h3>
+                            
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <span class="badge bg-primary">{{ bottle.spirit_type }}</span>
+                                    <span class="badge bg-secondary">{{ bottle.region }}</span>
+                                    <span class="badge bg-info">{{ bottle.abv }}% ABV</span>
+                                </div>
+                                <div>
+                                    {% if bottle.total_score %}
+                                        <span class="badge bg-warning" data-bs-toggle="tooltip" title="Rating Score">
+                                            <i class="fas fa-star me-1"></i>{{ bottle.total_score|round(1) }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>MSRP:</strong> ${{ bottle.msrp|round(2) }}</p>
+                                    {% if bottle.fair_price %}
+                                        <p class="mb-1"><strong>Fair Price:</strong> ${{ bottle.fair_price|round(2) }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="flavor-profile-container" 
+                                         data-flavors='{
+                                            "peated": {{ bottle.flavor_profile_peated|default(0) }},
+                                            "sherried": {{ bottle.flavor_profile_sherried|default(0) }},
+                                            "fruity": {{ bottle.flavor_profile_fruity|default(0) }},
+                                            "spicy": {{ bottle.flavor_profile_spicy|default(0) }},
+                                            "smoky": {{ bottle.flavor_profile_smoky|default(0) }},
+                                            "vanilla": {{ bottle.flavor_profile_vanilla|default(0) }},
+                                            "caramel": {{ bottle.flavor_profile_caramel|default(0) }}
+                                        }'>
+                                        <!-- JS will populate this -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="recommendation-reason">
+                    <div class="recommendation-reason mt-3">
                         <i class="fas fa-info-circle text-warning me-2"></i>
                         {{ bottle.explanation }}
                     </div>
