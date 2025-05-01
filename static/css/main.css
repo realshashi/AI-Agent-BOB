@@ -1,16 +1,38 @@
-/* Main styles for Bob the Whisky Expert */
+/* Main styles for Bob the Whisky Expert - BAXUS Light Theme */
+
+:root {
+    --baxus-teal: #0f766e;
+    --baxus-dark-teal: #0c5c55;
+    --baxus-light-teal: #e6f7f5;
+    --baxus-gold: #d4b174;
+    --baxus-text: #333333;
+    --baxus-light-gray: #f8f9fa;
+    --baxus-border: #e1e4e8;
+}
+
+body {
+    color: var(--baxus-text);
+    background-color: #fff;
+}
 
 /* Whisky card styling */
 .whisky-card {
-    background-color: #2a2a2a;
-    border-color: #444;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    border: 1px solid var(--baxus-border);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
 }
 
 .whisky-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.whisky-card .card-title {
+    color: var(--baxus-teal);
+    font-weight: 600;
 }
 
 .bottle-image {
@@ -27,12 +49,53 @@
 }
 
 .recommendation-reason {
-    background-color: rgba(255, 193, 7, 0.1);
-    border-left: 3px solid #ffc107;
+    background-color: var(--baxus-light-teal);
+    border-left: 3px solid var(--baxus-teal);
     padding: 10px 15px;
     margin-top: 15px;
     font-style: italic;
     border-radius: 0 4px 4px 0;
+    color: var(--baxus-text);
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: var(--baxus-teal);
+    border-color: var(--baxus-teal);
+}
+
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active {
+    background-color: var(--baxus-dark-teal);
+    border-color: var(--baxus-dark-teal);
+}
+
+.btn-outline-primary {
+    color: var(--baxus-teal);
+    border-color: var(--baxus-teal);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--baxus-teal);
+    border-color: var(--baxus-teal);
+}
+
+/* Badge styling */
+.badge.bg-primary {
+    background-color: var(--baxus-teal) !important;
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+}
+
+.badge.bg-info {
+    background-color: #0dcaf0 !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--baxus-gold) !important;
 }
 
 /* Preference badges */
@@ -41,6 +104,30 @@
     margin-bottom: 5px;
     padding: 5px 10px;
     font-size: 0.85rem;
+    background-color: var(--baxus-light-gray) !important;
+    color: var(--baxus-text) !important;
+    border: 1px solid var(--baxus-border);
+}
+
+/* Heading styling */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--baxus-text);
+}
+
+h2 {
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 8px;
+}
+
+h2:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--baxus-teal);
 }
 
 /* Responsive adjustments */

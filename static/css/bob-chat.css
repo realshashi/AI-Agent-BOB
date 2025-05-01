@@ -7,8 +7,10 @@
     z-index: 1000;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     font-size: 0.9rem;
+    border: 1px solid #e1e4e8;
+    background-color: #fff;
 }
 
 .bob-chat-header {
@@ -22,7 +24,7 @@
 }
 
 .bob-chat-body {
-    background-color: #222;
+    background-color: #f8f9fa;
     height: 380px;
     display: flex;
     flex-direction: column;
@@ -47,8 +49,8 @@
 
 .bob-input-area {
     padding: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background-color: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid #e1e4e8;
+    background-color: #fff;
 }
 
 .message {
@@ -58,6 +60,7 @@
     border-radius: 16px;
     position: relative;
     line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .message p {
@@ -72,24 +75,25 @@
 }
 
 .bot-message.error {
-    background-color: #8b0000;
-    border-left: 3px solid #ff0000;
+    background-color: #dc3545;
+    border-left: 3px solid #b30000;
 }
 
 .user-message {
-    background-color: #333;
-    color: white;
+    background-color: #e9ecef;
+    color: #212529;
     align-self: flex-end;
     border-bottom-right-radius: 4px;
 }
 
 .system-message {
     align-self: center;
-    color: #aaa;
+    color: #6c757d;
     font-size: 0.8rem;
     padding: 5px 10px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #f8f9fa;
     border-radius: 15px;
+    border: 1px solid #e1e4e8;
     margin: 5px 0;
 }
 
@@ -132,4 +136,41 @@
     0% { transform: scale(1); opacity: 0.4; }
     50% { transform: scale(1.1); opacity: 1; }
     100% { transform: scale(1); opacity: 0.4; }
+}
+
+/* Chat input styling */
+#bobChatInput:focus {
+    border-color: #0f766e;
+    box-shadow: 0 0 0 0.25rem rgba(15, 118, 110, 0.25);
+}
+
+/* Button styling for chat */
+#bobChatForm .btn-primary {
+    background-color: #0f766e;
+    border-color: #0f766e;
+}
+
+#bobChatForm .btn-primary:hover,
+#bobChatForm .btn-primary:focus {
+    background-color: #0a5c55;
+    border-color: #0a5c55;
+}
+
+/* Suggestion and reset buttons */
+.bob-input-area .btn-link {
+    color: #0f766e;
+    text-decoration: none;
+}
+
+.bob-input-area .btn-link:hover,
+.bob-input-area .btn-link:focus {
+    color: #0a5c55;
+    text-decoration: underline;
+}
+
+/* Dropdown styling */
+.suggestion-menu .dropdown-item:active,
+.suggestion-menu .dropdown-item:focus {
+    background-color: #e6f7f5;
+    color: #0f766e;
 }
