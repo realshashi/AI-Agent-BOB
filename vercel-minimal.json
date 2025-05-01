@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/vercel.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.11",
+        "installCommand": "pip install flask requests",
+        "maxDuration": 10
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/chat",
+      "dest": "api/vercel.py"
+    },
+    {
+      "src": "/api/status",
+      "dest": "api/vercel.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "api/vercel.py"
+    }
+  ],
+  "env": {
+    "PYTHONUNBUFFERED": "1",
+    "VERCEL": "1"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "bob-whisky-expert",
+  "version": "1.0.0",
+  "description": "AI-powered whisky recommendation platform with Bob the Whisky Expert",
+  "private": true,
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "vercel-build": "pip install -r vercel_requirements.txt"
+  },
+  "keywords": [
+    "whisky",
+    "recommendations",
+    "ai",
+    "flask",
+    "python"
+  ],
+  "author": "Replit AI Agent",
+  "license": "ISC"
+}
