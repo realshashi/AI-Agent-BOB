@@ -1,6 +1,7 @@
 import os
 import logging
 import json
+import datetime
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 from baxus_api import get_user_bar_data
 from recommendation_engine import analyze_preferences, generate_recommendations
@@ -161,13 +162,36 @@ def reset_chat():
     session.pop('chat_history', None)
     return jsonify({"success": True})
 
+# Error handlers
 @app.errorhandler(404)
 def page_not_found(e):
+    logger.warning(f"404 error: {str(e)}")
     return render_template('index.html', error="Page not found"), 404
 
 @app.errorhandler(500)
 def server_error(e):
+    logger.error(f"500 error: {str(e)}")
     return render_template('index.html', error="Internal server error. Please try again later."), 500
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # Log the error for debugging
+    logger.error(f"Unhandled exception: {str(e)}")
+    
+    # For Vercel, we need to make sure we return a valid response
+    return render_template('index.html', 
+                          error="Something went wrong. Please try again or contact support."), 500
+
+# Basic status check for monitoring
+@app.route('/status')
+def status():
+    """Status endpoint for health checks"""
+    return jsonify({
+        "status": "ok",
+        "timestamp": datetime.datetime.now().isoformat(),
+        "openai_api": "configured" if OPENAI_API_KEY else "missing",
+        "environment": "vercel" if IS_VERCEL else "development"
+    })
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
