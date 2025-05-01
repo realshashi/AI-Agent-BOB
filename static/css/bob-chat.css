@@ -140,37 +140,37 @@
 
 /* Chat input styling */
 #bobChatInput:focus {
-    border-color: #0f766e;
-    box-shadow: 0 0 0 0.25rem rgba(15, 118, 110, 0.25);
+    border-color: #2F7D77;
+    box-shadow: 0 0 0 0.25rem rgba(47, 125, 119, 0.25);
 }
 
 /* Button styling for chat */
 #bobChatForm .btn-primary {
-    background-color: #0f766e;
-    border-color: #0f766e;
+    background-color: #2F7D77;
+    border-color: #2F7D77;
 }
 
 #bobChatForm .btn-primary:hover,
 #bobChatForm .btn-primary:focus {
-    background-color: #0a5c55;
-    border-color: #0a5c55;
+    background-color: #276661;
+    border-color: #276661;
 }
 
 /* Suggestion and reset buttons */
 .bob-input-area .btn-link {
-    color: #0f766e;
+    color: #2F7D77;
     text-decoration: none;
 }
 
 .bob-input-area .btn-link:hover,
 .bob-input-area .btn-link:focus {
-    color: #0a5c55;
+    color: #276661;
     text-decoration: underline;
 }
 
 /* Dropdown styling */
 .suggestion-menu .dropdown-item:active,
 .suggestion-menu .dropdown-item:focus {
-    background-color: #e6f7f5;
-    color: #0f766e;
+    background-color: #e9f5f4;
+    color: #2F7D77;
 }
