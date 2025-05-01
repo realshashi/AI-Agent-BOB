@@ -1,5 +1,57 @@
 /* Bob the Whisky Expert Custom Styles */
 
+/* Chat Widget Styles */
+.chat-widget-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 350px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.chat-widget {
+    display: flex;
+    flex-direction: column;
+    background-color: #212529;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 450px;
+}
+
+.chat-widget-header {
+    background-color: #0D6EFD;
+    color: white;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.chat-widget-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    background-color: #212529;
+    overflow: hidden;
+}
+
+#chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.chat-container {
+    height: 320px;
+}
+
 /* General styling */
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
