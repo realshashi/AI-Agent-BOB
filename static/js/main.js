@@ -1,6 +1,12 @@
 // Main JS file for Bob the Whisky Expert
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Ensure loading spinner is hidden on page load
+    const loadingSpinner = document.getElementById('loading-spinner');
+    if (loadingSpinner) {
+        loadingSpinner.style.display = 'none';
+    }
+    
     // Form validation
     const usernameForm = document.getElementById('username-form');
     if (usernameForm) {
@@ -12,8 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Show loading spinner
-            const loadingSpinner = document.getElementById('loading-spinner');
+            // Show loading spinner only when submitting the form
             if (loadingSpinner) {
                 loadingSpinner.style.display = 'block';
             }

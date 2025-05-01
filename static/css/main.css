@@ -178,6 +178,14 @@ h2:after {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
+/* Loading spinner styling */
+.loading-spinner {
+    display: none;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 1rem;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .bottle-image {
