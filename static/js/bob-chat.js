@@ -94,7 +94,23 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Add bot response
             const botMessageDiv = document.createElement('div');
-            botMessageDiv.className = 'message bot-message';
+            
+            // Add error class if there was an error
+            if (data.error) {
+                botMessageDiv.className = 'message bot-message error';
+                console.warn('Chat API error:', data.error);
+                
+                // Add a suggestion to contact admin for API key issues
+                if (data.error === 'api_key_missing') {
+                    // Additional notification for missing API key
+                    const systemMsg = document.createElement('div');
+                    systemMsg.className = 'system-message';
+                    systemMsg.textContent = 'OpenAI API key needs to be configured';
+                    chatMessages.appendChild(systemMsg);
+                }
+            } else {
+                botMessageDiv.className = 'message bot-message';
+            }
             
             // Format the message with markdown-like syntax
             let formattedContent = data.response

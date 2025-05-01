@@ -71,6 +71,11 @@
     border-bottom-left-radius: 4px;
 }
 
+.bot-message.error {
+    background-color: #8b0000;
+    border-left: 3px solid #ff0000;
+}
+
 .user-message {
     background-color: #333;
     color: white;

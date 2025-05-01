@@ -10,6 +10,11 @@ from bob_chat import chat_with_bob
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+# Check if OpenAI API key is available
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    logger.warning("OPENAI_API_KEY is not set. Chat functionality will be limited.")
+
 # Initialize Flask app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "bob-whisky-expert-secret")
@@ -91,6 +96,16 @@ def chat():
         # Add the new user message to history
         chat_history.append({"role": "user", "content": message})
         
+        # Check if OpenAI API key is available
+        if not OPENAI_API_KEY:
+            api_error_msg = "I'm unable to connect to my whisky knowledge base at the moment. The OpenAI API key is missing or invalid. Please contact the administrator."
+            logger.error("Missing OpenAI API key for chat request")
+            
+            # Add error response to history
+            chat_history.append({"role": "assistant", "content": api_error_msg})
+            session['chat_history'] = chat_history[-20:] if len(chat_history) > 20 else chat_history
+            return jsonify({"response": api_error_msg, "error": "api_key_missing"})
+        
         try:
             # Get response from Bob
             bob_response = chat_with_bob(chat_history, username, user_preferences)
@@ -105,8 +120,20 @@ def chat():
             return jsonify({"response": bob_response})
             
         except Exception as e:
+            error_msg = "I apologize, but I'm experiencing technical difficulties. Please try again shortly."
+            
+            # Check for specific OpenAI errors
+            error_str = str(e).lower()
+            if "rate limit" in error_str or "quota" in error_str:
+                error_msg = "I apologize, but I've reached my connection limit to the whisky knowledge base. Please try again later or contact the administrator."
+            
             logger.exception(f"Error in chat: {str(e)}")
-            return jsonify({"response": "I apologize, but I'm experiencing technical difficulties. Please try again."})
+            
+            # Add error response to history
+            chat_history.append({"role": "assistant", "content": error_msg})
+            session['chat_history'] = chat_history[-20:] if len(chat_history) > 20 else chat_history
+            
+            return jsonify({"response": error_msg, "error": "api_error"})
     
     # For GET requests, render the chat page
     return render_template('chat.html', 
