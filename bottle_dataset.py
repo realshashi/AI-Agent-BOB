@@ -12,10 +12,20 @@ def get_bottle_dataset() -> pd.DataFrame:
     Returns:
         A pandas DataFrame containing all bottles with their attributes
     """
-    # Load the real dataset from the CSV file
-    dataset_path = 'attached_assets/dataset.csv'
-    if not os.path.exists(dataset_path):
-        logger.warning(f"Dataset file not found at {dataset_path}, using fallback data")
+    # Try to load the real dataset from multiple possible locations
+    possible_paths = [
+        'attached_assets/dataset.csv',
+        'static/data/dataset.csv'
+    ]
+    
+    dataset_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            dataset_path = path
+            break
+            
+    if not dataset_path:
+        logger.warning(f"Dataset file not found in any of the expected locations, using fallback data")
         return _get_fallback_dataset()  # Use fallback if file not found
     
     try:
