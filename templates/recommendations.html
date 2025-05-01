@@ -22,7 +22,7 @@
                 <div class="mt-2">
                     {% for region, percentage in preferences.preferred_regions.items() %}
                         {% if percentage >= 10 %}
-                            <span class="badge bg-secondary preference-badge">{{ region }}: {{ percentage|round }}%</span>
+                            <span class="badge preference-badge">{{ region }}: {{ percentage|round }}%</span>
                         {% endif %}
                     {% endfor %}
                 </div>
@@ -34,7 +34,7 @@
                 <div class="mt-2">
                     {% for spirit, percentage in preferences.spirit_types.items() %}
                         {% if percentage >= 10 %}
-                            <span class="badge bg-secondary preference-badge">{{ spirit }}: {{ percentage|round }}%</span>
+                            <span class="badge preference-badge">{{ spirit }}: {{ percentage|round }}%</span>
                         {% endif %}
                     {% endfor %}
                 </div>

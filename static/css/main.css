@@ -109,9 +109,11 @@ body {
     margin-bottom: 5px;
     padding: 5px 10px;
     font-size: 0.85rem;
-    background-color: var(--baxus-light-gray) !important;
+    background-color: #ffffff !important;
     color: var(--baxus-text) !important;
-    border: 1px solid var(--baxus-border);
+    border: 1px solid var(--baxus-teal);
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 /* Heading styling */
