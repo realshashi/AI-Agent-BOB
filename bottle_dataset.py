@@ -1,34 +1,112 @@
 import pandas as pd
 import logging
+import os
 from typing import List, Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
 
-# For now, we'll simulate the bottle dataset
-# In a real implementation, this would load from a database or CSV file
 def get_bottle_dataset() -> pd.DataFrame:
     """
-    Loads the 501-bottle dataset.
+    Loads the real whisky bottle dataset.
     
     Returns:
         A pandas DataFrame containing all bottles with their attributes
     """
-    # This is a placeholder. In a real implementation, this would load the actual dataset.
-    # For demonstration purposes, we'll create a simplified mock dataset structure
+    # Load the real dataset from the CSV file
+    dataset_path = 'attached_assets/dataset.csv'
+    if not os.path.exists(dataset_path):
+        logger.warning(f"Dataset file not found at {dataset_path}, using fallback data")
+        return _get_fallback_dataset()  # Use fallback if file not found
+    
+    try:
+        # Read the CSV file
+        df = pd.read_csv(dataset_path)
+        logger.info(f"Loaded real dataset with {len(df)} bottles")
+        
+        # Convert column names to match our expected format
+        column_mapping = {
+            'avg_msrp': 'msrp',
+            'abv': 'abv',
+            'spirit_type': 'spirit_type',
+            'total_score': 'total_score'
+        }
+        
+        # Rename columns if they exist
+        for old_name, new_name in column_mapping.items():
+            if old_name in df.columns and old_name != new_name:
+                df = df.rename(columns={old_name: new_name})
+        
+        # Fill missing values
+        df['abv'] = df['abv'].fillna(df['proof'] / 2 if 'proof' in df.columns else 45)
+        df['msrp'] = df['msrp'].fillna(50)  # Default price if missing
+        
+        # Add region info based on spirit type if missing
+        if 'region' not in df.columns:
+            df['region'] = df['spirit_type'].apply(_derive_region)
+        
+        # Add flavor profiles - in a real system this would come from a flavor database
+        # Here we're inferring based on spirit type
+        df['flavor_profile_peated'] = df['spirit_type'].apply(lambda x: 80 if 'Scotch' in str(x) else 20)
+        df['flavor_profile_sherried'] = df['spirit_type'].apply(lambda x: 70 if 'Scotch' in str(x) else 30)
+        df['flavor_profile_fruity'] = df['spirit_type'].apply(lambda x: 60 if 'Rye' in str(x) else 40)
+        df['flavor_profile_spicy'] = df['spirit_type'].apply(lambda x: 75 if 'Rye' in str(x) else 30)
+        df['flavor_profile_smoky'] = df['flavor_profile_peated'] * 0.8
+        df['flavor_profile_vanilla'] = df['spirit_type'].apply(lambda x: 80 if 'Bourbon' in str(x) else 40)
+        df['flavor_profile_caramel'] = df['spirit_type'].apply(lambda x: 70 if 'Bourbon' in str(x) else 30)
+        
+        # Convert to categorical types for efficiency
+        if 'spirit_type' in df.columns:
+            df['spirit_type'] = pd.Categorical(df['spirit_type'])
+        if 'region' in df.columns:
+            df['region'] = pd.Categorical(df['region'])
+        
+        return df
+    except Exception as e:
+        logger.exception(f"Error loading real dataset: {str(e)}")
+        return _get_fallback_dataset()  # Use fallback if there's an error
+
+def _derive_region(spirit_type: str) -> str:
+    """Helper to derive region from spirit type"""
+    spirit_type = str(spirit_type).lower()
+    if 'scotch' in spirit_type or 'scotland' in spirit_type:
+        if 'islay' in spirit_type:
+            return 'Scotland-Islay'
+        elif 'speyside' in spirit_type:
+            return 'Scotland-Speyside'
+        elif 'highland' in spirit_type:
+            return 'Scotland-Highland'
+        return 'Scotland'
+    elif 'bourbon' in spirit_type or 'rye' in spirit_type or 'tennessee' in spirit_type:
+        return 'America'
+    elif 'japanese' in spirit_type or 'japan' in spirit_type:
+        return 'Japan'
+    elif 'irish' in spirit_type or 'ireland' in spirit_type:
+        return 'Ireland'
+    elif 'canadian' in spirit_type or 'canada' in spirit_type:
+        return 'Canada'
+    else:
+        return 'Other'
+
+def _get_fallback_dataset() -> pd.DataFrame:
+    """
+    Creates a fallback dataset when the real one can't be loaded.
+    """
+    logger.warning("Using fallback bottle dataset")
+    # Create a simplified mock dataset structure
     data = {
-        'id': list(range(1, 502)),
-        'name': [f"Whisky {i}" for i in range(1, 502)],
-        'spirit_type': ['Single Malt', 'Bourbon', 'Rye', 'Blended Scotch', 'Japanese'] * 100 + ['Single Malt'],
-        'region': ['Scotland-Islay', 'Scotland-Speyside', 'America', 'Japan', 'Ireland'] * 100 + ['Scotland-Highland'],
-        'abv': [40 + (i % 20) for i in range(1, 502)],
-        'msrp': [50 + (i % 200) for i in range(1, 502)],
-        'fair_price': [60 + (i % 250) for i in range(1, 502)],
-        'total_score': [80 + (i % 20) for i in range(1, 502)],
-        'flavor_profile_peated': [(i % 5) * 20 for i in range(1, 502)],
-        'flavor_profile_sherried': [(i % 4) * 25 for i in range(1, 502)],
-        'flavor_profile_fruity': [(i % 3) * 30 for i in range(1, 502)],
-        'flavor_profile_spicy': [(i % 6) * 15 for i in range(1, 502)],
-        'brand_id': [f"Brand-{(i % 50) + 1}" for i in range(1, 502)],
+        'id': list(range(1, 101)),
+        'name': [f"Whisky {i}" for i in range(1, 101)],
+        'spirit_type': ['Single Malt', 'Bourbon', 'Rye', 'Blended Scotch', 'Japanese'] * 20,
+        'region': ['Scotland-Islay', 'Scotland-Speyside', 'America', 'Japan', 'Ireland'] * 20,
+        'abv': [40 + (i % 20) for i in range(1, 101)],
+        'msrp': [50 + (i % 200) for i in range(1, 101)],
+        'fair_price': [60 + (i % 250) for i in range(1, 101)],
+        'total_score': [80 + (i % 20) for i in range(1, 101)],
+        'flavor_profile_peated': [(i % 5) * 20 for i in range(1, 101)],
+        'flavor_profile_sherried': [(i % 4) * 25 for i in range(1, 101)],
+        'flavor_profile_fruity': [(i % 3) * 30 for i in range(1, 101)],
+        'flavor_profile_spicy': [(i % 6) * 15 for i in range(1, 101)],
+        'brand_id': [f"Brand-{(i % 50) + 1}" for i in range(1, 101)],
     }
     
     # Convert to DataFrame
