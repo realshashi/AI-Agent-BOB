@@ -6,7 +6,7 @@
       "use": "@vercel/python",
       "config": {
         "runtime": "python3.11",
-        "installCommand": "pip install flask gunicorn",
+        "installCommand": "pip install -r vercel_requirements.txt",
         "maxDuration": 60,
         "includeFiles": ["templates/**", "static/**"]
       }
