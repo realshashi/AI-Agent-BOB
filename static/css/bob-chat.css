@@ -14,7 +14,7 @@
 }
 
 .bob-chat-header {
-    background-color: #0f766e;
+    background-color: #2F7D77;
     color: white;
     padding: 10px 15px;
     display: flex;
@@ -68,7 +68,7 @@
 }
 
 .bot-message {
-    background-color: #0f766e;
+    background-color: #2F7D77;
     color: white;
     align-self: flex-start;
     border-bottom-left-radius: 4px;

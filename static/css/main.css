@@ -1,13 +1,14 @@
 /* Main styles for Bob the Whisky Expert - BAXUS Light Theme */
 
 :root {
-    --baxus-teal: #0f766e;
-    --baxus-dark-teal: #0c5c55;
-    --baxus-light-teal: #e6f7f5;
+    --baxus-teal: #2F7D77;
+    --baxus-dark-teal: #276661;
+    --baxus-light-teal: #e9f5f4;
     --baxus-gold: #d4b174;
     --baxus-text: #333333;
     --baxus-light-gray: #f8f9fa;
     --baxus-border: #e1e4e8;
+    --baxus-button-bg: #2F7D77;
 }
 
 body {
