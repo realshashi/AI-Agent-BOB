@@ -1,0 +1,60 @@
+/* Custom styling for Bob the Whisky Expert */
+.whisky-card {
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.whisky-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.hero-section {
+    background-color: var(--bs-dark);
+    padding: 5rem 0;
+    margin-bottom: 2rem;
+}
+
+.preference-badge {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.recommendation-reason {
+    font-style: italic;
+    margin-top: 1rem;
+}
+
+.brand-logo {
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Flavor profile visualization styles */
+.flavor-profile {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.flavor-bar {
+    height: 8px;
+    border-radius: 4px;
+    background-color: var(--bs-info);
+}
+
+/* User preference summary section */
+.preference-summary {
+    background-color: rgba(33, 37, 41, 0.6);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: none;
+    margin: 2rem auto;
+    text-align: center;
+}
