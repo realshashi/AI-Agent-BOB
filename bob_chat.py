@@ -6,7 +6,12 @@ from typing import Dict, List, Any, Optional
 logger = logging.getLogger(__name__)
 
 # Initialize the OpenAI client
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+api_key = os.environ.get("OPENAI_API_KEY")
+if not api_key:
+    logger.error("OpenAI API key not found in environment variables")
+else:
+    logger.info("OpenAI API key found in environment variables")
+client = OpenAI(api_key=api_key)
 
 # BOB's personality and knowledge system prompt
 BOB_SYSTEM_PROMPT = """
@@ -43,6 +48,11 @@ def chat_with_bob(messages: List[Dict[str, str]], username: Optional[str] = None
     Returns:
         Bob's response to the user's query
     """
+    # Check if API key is available again (belt and suspenders)
+    if not os.environ.get("OPENAI_API_KEY"):
+        logger.error("OpenAI API key not available in environment when chat_with_bob was called")
+        return "I apologize, but I'm having trouble connecting to my whisky knowledge base. The API key is missing. Please try again later."
+    
     # Start with the system message defining Bob's persona
     system_message = {"role": "system", "content": BOB_SYSTEM_PROMPT}
     
