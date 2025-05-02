@@ -78,41 +78,4 @@ document.addEventListener("DOMContentLoaded", function () {
       container.appendChild(noFlavorMsg);
     }
   });
-
-  // Theme switching functionality
-  const themeToggle = document.getElementById("themeToggle");
-  const lightIcon = document.getElementById("lightIcon");
-  const darkIcon = document.getElementById("darkIcon");
-  const html = document.documentElement;
-
-  // Check for saved theme preference, otherwise use system preference
-  const savedTheme = localStorage.getItem("theme");
-  const systemPrefersDark = window.matchMedia(
-    "(prefers-color-scheme: dark)"
-  ).matches;
-
-  // Set initial theme
-  if (savedTheme) {
-    html.setAttribute("data-bs-theme", savedTheme);
-    updateIcons(savedTheme === "dark");
-  } else {
-    html.setAttribute("data-bs-theme", systemPrefersDark ? "dark" : "light");
-    updateIcons(systemPrefersDark);
-  }
-
-  // Toggle theme on button click
-  themeToggle.addEventListener("click", function () {
-    const isDark = html.getAttribute("data-bs-theme") === "dark";
-    const newTheme = isDark ? "light" : "dark";
-
-    html.setAttribute("data-bs-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-    updateIcons(!isDark);
-  });
-
-  // Function to update icon visibility
-  function updateIcons(isDark) {
-    lightIcon.style.display = isDark ? "none" : "inline-block";
-    darkIcon.style.display = isDark ? "inline-block" : "none";
-  }
 });
