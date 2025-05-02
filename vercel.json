@@ -12,7 +12,8 @@
           "static/**",
           "*.py",
           "api/**",
-          "requirements.txt"
+          "requirements.txt",
+          "vercel_requirements.txt"
         ]
       }
     }
