@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "pip install --upgrade pip setuptools wheel && pip install -r vercel_requirements.txt",
+  "buildCommand": "python --version && pip --version && pip install --upgrade pip setuptools wheel && pip install -r vercel_requirements.txt",
   "builds": [
     {
       "src": "api/index.py",
@@ -8,12 +8,7 @@
       "config": {
         "runtime": "python3.11",
         "maxDuration": 60,
-        "includeFiles": [
-          "templates/**",
-          "static/**",
-          "*.py",
-          "api/**"
-        ]
+        "includeFiles": ["templates/**", "static/**", "*.py", "api/**"]
       }
     }
   ],

@@ -13,8 +13,8 @@ _.db
 # Development
 
 tests/
-_.test.py
-test\__.py
+\_.test.py
+test\_\_.py
 attached_assets/
 docker-compose*
 Dockerfile*
@@ -50,25 +50,25 @@ _.swo
 .git
 .gitignore
 .env
-*.pyc
-__pycache__
+_.pyc
+**pycache**
 .pytest_cache
-*.db
+_.db
 bob_cache.db
-*.sqlite3
+_.sqlite3
 .venv
 venv
 ENV
 env
 .DS_Store
 node_modules
-*.log
+_.log
 .coverage
 htmlcov
 .tox
 .nox
 .hypothesis
-*.egg-info
+_.egg-info
 dist
 build
-*.egg
+_.egg
