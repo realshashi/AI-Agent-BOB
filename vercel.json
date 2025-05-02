@@ -60,19 +60,5 @@
   "env": {
     "PYTHONUNBUFFERED": "1",
     "VERCEL": "1"
-  },
-  "functions": {
-    "vercel_app.py": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/index.py": {
-      "memory": 1024,
-      "maxDuration": 60
-    },
-    "api/whisky.py": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
   }
 }
