@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "python --version && pip --version && pip install --upgrade pip setuptools wheel && pip install -r vercel_requirements.txt",
+  "buildCommand": "python3.11 --version && pip3.11 --version && pip3.11 install --upgrade pip setuptools wheel && pip3.11 install -r vercel_requirements.txt",
   "builds": [
     {
       "src": "api/index.py",
