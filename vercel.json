@@ -2,23 +2,34 @@
   "version": 2,
   "builds": [
     {
-      "src": "vercel_app.py",
+      "src": "api/index.py",
       "use": "@vercel/python@3.1.30",
       "config": {
         "runtime": "python3.11",
         "maxDuration": 60,
-        "includeFiles": ["templates/**", "static/**"]
+        "includeFiles": ["templates/**", "static/**", "*.py", "api/**"]
       }
     }
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*\\.(ico|png|svg|json|txt))",
+      "dest": "/static/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "vercel_app.py"
+      "dest": "/api/index.py"
     }
   ],
   "env": {
-    "PYTHONUNBUFFERED": "1",
-    "VERCEL": "1"
+    "PYTHONPATH": ".",
+    "PYTHONUNBUFFERED": "1"
   }
 }

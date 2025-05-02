@@ -1,23 +1,46 @@
-# Vercel ignore file
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
+# Python
+
+**pycache**
+_.pyc
+_.pyo
+_.pyd
 .Python
 venv/
 env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
+.env
+_.db
+
+# Development
+
+tests/
+_.test.py
+test\__.py
+attached_assets/
+docker-compose*
+Dockerfile*
+\*.md
+!README.md
+
+# Local config
+
+.vscode/
+.idea/
+\*.log
+
+# Cache
+
+\*.cache
 bob_cache.db
+
+# Documentation
+
+docs/
+INSTALLATION.md
+USAGE.md
+VERCEL_DEPLOYMENT\*.md
+
+# Temporary files
+
+_.swp
+_.swo
+.DS_Store
