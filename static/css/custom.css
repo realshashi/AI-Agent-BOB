@@ -2,233 +2,289 @@
 
 /* Chat Widget Styles */
 .chat-widget-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    width: 350px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    overflow: hidden;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  width: 350px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .chat-widget {
-    display: flex;
-    flex-direction: column;
-    background-color: #212529;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    height: 450px;
+  display: flex;
+  flex-direction: column;
+  background-color: #212529;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 450px;
 }
 
 .chat-widget-header {
-    background-color: #0D6EFD;
-    color: white;
-    padding: 10px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
+  background-color: #0d6efd;
+  color: white;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
 }
 
 .chat-widget-body {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    background-color: #212529;
-    overflow: hidden;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  background-color: #212529;
+  overflow: hidden;
 }
 
 #chat-messages {
-    flex-grow: 1;
-    overflow-y: auto;
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
 }
 
 .chat-container {
-    height: 320px;
+  height: 320px;
 }
 
 /* General styling */
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Card styling */
 .card {
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.3s ease;
 }
 
 .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .card-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Chat-specific styling */
 .chat-container {
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
 }
 
 .message-row {
-    margin-bottom: 15px;
-    display: flex;
+  margin-bottom: 15px;
+  display: flex;
 }
 
 .message {
-    max-width: 80%;
-    padding: 12px 16px;
-    border-radius: 18px;
-    position: relative;
-    line-height: 1.5;
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  position: relative;
+  line-height: 1.5;
 }
 
 .bot-message {
-    background-color: #343a40;
-    color: white;
-    border-bottom-left-radius: 5px;
-    align-self: flex-start;
-    margin-right: auto;
+  background-color: #343a40;
+  color: white;
+  border-bottom-left-radius: 5px;
+  align-self: flex-start;
+  margin-right: auto;
 }
 
 .user-message {
-    background-color: #0d6efd;
-    color: white;
-    border-bottom-right-radius: 5px;
-    align-self: flex-end;
-    margin-left: auto;
+  background-color: #0d6efd;
+  color: white;
+  border-bottom-right-radius: 5px;
+  align-self: flex-end;
+  margin-left: auto;
 }
 
 .typing-indicator {
-    background-color: #343a40;
-    display: inline-flex;
-    align-items: center;
-    padding: 12px 16px;
+  background-color: #343a40;
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 16px;
 }
 
 .typing-indicator span {
-    height: 8px;
-    width: 8px;
-    border-radius: 50%;
-    background-color: #fff;
-    display: inline-block;
-    margin-right: 4px;
-    animation: pulse 1.5s infinite ease-in-out;
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  background-color: #fff;
+  display: inline-block;
+  margin-right: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
 }
 
 .typing-indicator span:nth-child(2) {
-    animation-delay: 0.2s;
+  animation-delay: 0.2s;
 }
 
 .typing-indicator span:nth-child(3) {
-    animation-delay: 0.4s;
-    margin-right: 0;
+  animation-delay: 0.4s;
+  margin-right: 0;
 }
 
 @keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 0.5;
-    }
-    50% {
-        transform: scale(1.2);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 0.5;
-    }
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
 }
 
 .suggestion-link {
-    color: #6c757d;
-    text-decoration: none;
-    cursor: pointer;
-    transition: color 0.2s ease;
+  color: #6c757d;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
 }
 
 .suggestion-link:hover {
-    color: #0d6efd;
-    text-decoration: underline;
+  color: #0d6efd;
+  text-decoration: underline;
 }
 
 /* Custom avatar */
 .avatar-container {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: #343a40;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #343a40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Whisky bottle styling */
 .bottle-card {
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
 }
 
 .bottle-card:hover {
-    transform: translateY(-5px);
+  transform: translateY(-5px);
 }
 
 .bottle-image {
-    height: 200px;
-    object-fit: contain;
-    background-color: rgba(0, 0, 0, 0.05);
+  height: 200px;
+  object-fit: contain;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Preference badges */
 .preference-badge {
-    background-color: rgba(255, 193, 7, 0.2);
-    color: #ffc107;
-    border: 1px solid rgba(255, 193, 7, 0.3);
-    font-size: 0.8rem;
-    margin-right: 5px;
-    margin-bottom: 5px;
+  background-color: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  font-size: 0.8rem;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
 
 /* Recommendation explanation */
 .recommendation-reason {
-    font-size: 0.85rem;
-    color: #adb5bd;
+  font-size: 0.85rem;
+  color: #adb5bd;
 }
 
 /* Footer styling */
 footer {
-    margin-top: 4rem;
+  margin-top: 4rem;
+  background-color: var(--footer-bg) !important;
+  transition: background-color 0.3s ease;
 }
 
 /* Region Colors */
 .region-scotland {
-    color: #6a0dad;
+  color: #6a0dad;
 }
 
 .region-ireland {
-    color: #107C10;
+  color: #107c10;
 }
 
 .region-america {
-    color: #0078D4;
+  color: #0078d4;
 }
 
 .region-japan {
-    color: #C50F1F;
+  color: #c50f1f;
 }
 
 .region-other {
-    color: #FF8C00;
+  color: #ff8c00;
+}
+
+/* Theme-specific styles */
+[data-bs-theme="dark"] {
+  --navbar-bg: var(--bs-dark);
+  --footer-bg: var(--bs-dark);
+}
+
+[data-bs-theme="light"] {
+  --navbar-bg: var(--bs-white);
+  --footer-bg: var(--bs-light);
+}
+
+/* Navbar theme styles */
+.navbar {
+  background-color: var(--navbar-bg) !important;
+  transition: background-color 0.3s ease;
+}
+
+/* Theme toggle button styles */
+#themeToggle {
+  padding: 0.5rem;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+#themeToggle:hover {
+  transform: scale(1.1);
+}
+
+#themeToggle i {
+  transition: all 0.3s ease;
+}
+
+[data-bs-theme="dark"] #themeToggle {
+  color: var(--bs-light);
+}
+
+[data-bs-theme="light"] #themeToggle {
+  color: var(--bs-dark);
+}
+
+/* Custom styles for dark theme whisky cards */
+[data-bs-theme="dark"] .whisky-card {
+  border-color: var(--bs-gray-700);
+}
+
+/* Flavor tag theme adjustments */
+[data-bs-theme="dark"] .flavor-tag {
+  background-color: var(--bs-gray-700);
+  color: var(--bs-light);
 }

@@ -1,151 +1,215 @@
-{% extends 'base.html' %}
-
-{% block title %}Your Recommendations{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% block title %}Your Recommendations{% endblock %} {%
+block content %}
 <div class="container my-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="mb-4">Hello, <span class="text-success">{{ username }}</span></h1>
-            <p class="lead">Based on your BAXUS collection, here are your personalized whisky recommendations.</p>
-        </div>
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="mb-4">
+        Hello, <span class="text-success">{{ username }}</span>
+      </h1>
+      <p class="lead">
+        Based on your BAXUS collection, here are your personalized whisky
+        recommendations.
+      </p>
     </div>
-    
-    <!-- User Preference Summary -->
-    <div class="preference-section mb-5">
-        <h3 class="mb-4">Your Whisky Preferences</h3>
-        
-        <div class="row">
-            <!-- Regions -->
-            <div class="col-md-4 mb-4">
-                <h5><i class="fas fa-map-marker-alt me-2 text-success"></i>Preferred Regions</h5>
-                <div class="mt-2">
-                    {% for region, percentage in preferences.preferred_regions.items() %}
-                        {% if percentage >= 10 %}
-                            <span class="badge preference-badge">{{ region }}: {{ percentage|round }}%</span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-            
-            <!-- Spirit Types -->
-            <div class="col-md-4 mb-4">
-                <h5><i class="fas fa-wine-bottle me-2 text-success"></i>Spirit Types</h5>
-                <div class="mt-2">
-                    {% for spirit, percentage in preferences.spirit_types.items() %}
-                        {% if percentage >= 10 %}
-                            <span class="badge preference-badge">{{ spirit }}: {{ percentage|round }}%</span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-            
-            <!-- Price Range -->
-            <div class="col-md-4 mb-4">
-                <h5><i class="fas fa-tag me-2 text-success"></i>Price Preferences</h5>
-                <div class="mt-2">
-                    <p class="mb-1">Average Bottle: ${{ preferences.average_bottle_price|round(2) }}</p>
-                    <div class="progress" style="height: 10px;">
-                        {% for range, percentage in preferences.price_ranges.items() %}
-                            {% if percentage > 0 %}
-                                {% if range == 'entry' %}
-                                    <div class="progress-bar bg-success" style="width: {{ percentage }}%" 
-                                         title="Entry ($0-50): {{ percentage|round }}%"></div>
-                                {% elif range == 'mid' %}
-                                    <div class="progress-bar bg-info" style="width: {{ percentage }}%" 
-                                         title="Mid ($51-100): {{ percentage|round }}%"></div>
-                                {% elif range == 'premium' %}
-                                    <div class="progress-bar bg-warning" style="width: {{ percentage }}%" 
-                                         title="Premium ($101-200): {{ percentage|round }}%"></div>
-                                {% elif range == 'luxury' %}
-                                    <div class="progress-bar bg-danger" style="width: {{ percentage }}%" 
-                                         title="Luxury ($201+): {{ percentage|round }}%"></div>
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Flavor Profile -->
-            <div class="col-md-6 mb-4">
-                <h5><i class="fas fa-chart-pie me-2 text-success"></i>Flavor Profile</h5>
-                <div class="flavor-profile-container" data-flavors='{{ preferences.flavor_profiles|tojson }}'>
-                    <!-- JS will populate this -->
-                </div>
-            </div>
-            
-            <!-- ABV Preferences -->
-            <div class="col-md-6 mb-4">
-                <h5><i class="fas fa-percentage me-2 text-success"></i>ABV Preferences</h5>
-                <div class="mt-2">
-                    <div class="progress" style="height: 20px;">
-                        {% for level, percentage in preferences.abv_preferences.items() %}
-                            {% if percentage > 0 %}
-                                {% if level == 'low' %}
-                                    <div class="progress-bar" style="width: {{ percentage }}%" 
-                                         title="Low ABV (<43%): {{ percentage|round }}%">{{ percentage|round }}%</div>
-                                {% elif level == 'medium' %}
-                                    <div class="progress-bar bg-info" style="width: {{ percentage }}%" 
-                                         title="Medium ABV (43-50%): {{ percentage|round }}%">{{ percentage|round }}%</div>
-                                {% elif level == 'high' %}
-                                    <div class="progress-bar bg-danger" style="width: {{ percentage }}%" 
-                                         title="High ABV (>50%): {{ percentage|round }}%">{{ percentage|round }}%</div>
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Recommendations -->
-    <h2 class="mb-4">Your Recommendations</h2>
-    
+  </div>
+
+  <!-- User Preference Summary -->
+  <div class="preference-section mb-5">
+    <h3 class="mb-4">Your Whisky Preferences</h3>
+
     <div class="row">
-        {% for bottle in recommendations %}
-        <div class="col-lg-6 mb-4">
-            <div class="card whisky-card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            {% if bottle.image_url %}
-                            <img src="{{ bottle.image_url }}" alt="{{ bottle.name }}" class="img-fluid rounded bottle-image mb-3" style="max-height: 200px;">
-                            {% else %}
-                            <div class="no-image-placeholder rounded" style="height: 200px; background-color: #333; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-wine-bottle fa-3x text-muted"></i>
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-8">
-                            <h3 class="card-title">{{ bottle.name }}</h3>
-                            
-                            <div class="d-flex justify-content-between mb-3">
-                                <div>
-                                    <span class="badge bg-primary">{{ bottle.spirit_type }}</span>
-                                    <span class="badge bg-secondary">{{ bottle.region }}</span>
-                                    <span class="badge bg-info">{{ bottle.abv }}% ABV</span>
-                                </div>
-                                <div>
-                                    {% if bottle.total_score %}
-                                        <span class="badge bg-success" data-bs-toggle="tooltip" title="Rating Score">
-                                            <i class="fas fa-star me-1"></i>{{ bottle.total_score|round(1) }}
-                                        </span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <p class="mb-1"><strong>MSRP:</strong> ${{ bottle.msrp|round(2) }}</p>
-                                    {% if bottle.fair_price %}
-                                        <p class="mb-1"><strong>Fair Price:</strong> ${{ bottle.fair_price|round(2) }}</p>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="flavor-profile-container" 
-                                         data-flavors='{
+      <!-- Regions -->
+      <div class="col-md-4 mb-4">
+        <h5>
+          <i class="fas fa-map-marker-alt me-2 text-success"></i>Preferred
+          Regions
+        </h5>
+        <div class="mt-2">
+          {% for region, percentage in preferences.preferred_regions.items() %}
+          {% if percentage >= 10 %}
+          <span class="badge preference-badge"
+            >{{ region }}: {{ percentage|round }}%</span
+          >
+          {% endif %} {% endfor %}
+        </div>
+      </div>
+
+      <!-- Spirit Types -->
+      <div class="col-md-4 mb-4">
+        <h5>
+          <i class="fas fa-wine-bottle me-2 text-success"></i>Spirit Types
+        </h5>
+        <div class="mt-2">
+          {% for spirit, percentage in preferences.spirit_types.items() %} {% if
+          percentage >= 10 %}
+          <span class="badge preference-badge"
+            >{{ spirit }}: {{ percentage|round }}%</span
+          >
+          {% endif %} {% endfor %}
+        </div>
+      </div>
+
+      <!-- Price Range -->
+      <div class="col-md-4 mb-4">
+        <h5><i class="fas fa-tag me-2 text-success"></i>Price Preferences</h5>
+        <div class="mt-2">
+          <p class="mb-1">
+            Average Bottle: ${{ preferences.average_bottle_price|round(2) }}
+          </p>
+          <div class="progress" style="height: 10px">
+            {% for range, percentage in preferences.price_ranges.items() %} {%
+            if percentage > 0 %} {% if range == 'entry' %}
+            <div
+              class="progress-bar bg-success"
+              style="width: {{ percentage }}%"
+              title="Entry ($0-50): {{ percentage|round }}%"
+            ></div>
+            {% elif range == 'mid' %}
+            <div
+              class="progress-bar bg-info"
+              style="width: {{ percentage }}%"
+              title="Mid ($51-100): {{ percentage|round }}%"
+            ></div>
+            {% elif range == 'premium' %}
+            <div
+              class="progress-bar bg-warning"
+              style="width: {{ percentage }}%"
+              title="Premium ($101-200): {{ percentage|round }}%"
+            ></div>
+            {% elif range == 'luxury' %}
+            <div
+              class="progress-bar bg-danger"
+              style="width: {{ percentage }}%"
+              title="Luxury ($201+): {{ percentage|round }}%"
+            ></div>
+            {% endif %} {% endif %} {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Flavor Profile -->
+      <div class="col-md-6 mb-4">
+        <h5>
+          <i class="fas fa-chart-pie me-2 text-success"></i>Flavor Profile
+        </h5>
+        <div
+          class="flavor-profile-container"
+          data-flavors="{{ preferences.flavor_profiles|tojson }}"
+        >
+          <!-- JS will populate this -->
+        </div>
+      </div>
+
+      <!-- ABV Preferences -->
+      <div class="col-md-6 mb-4">
+        <h5>
+          <i class="fas fa-percentage me-2 text-success"></i>ABV Preferences
+        </h5>
+        <div class="mt-2">
+          <div class="progress" style="height: 20px">
+            {% for level, percentage in preferences.abv_preferences.items() %}
+            {% if percentage > 0 %} {% if level == 'low' %}
+            <div
+              class="progress-bar"
+              style="width: {{ percentage }}%"
+              title="Low ABV (<43%): {{ percentage|round }}%"
+            >
+              {{ percentage|round }}%
+            </div>
+            {% elif level == 'medium' %}
+            <div
+              class="progress-bar bg-info"
+              style="width: {{ percentage }}%"
+              title="Medium ABV (43-50%): {{ percentage|round }}%"
+            >
+              {{ percentage|round }}%
+            </div>
+            {% elif level == 'high' %}
+            <div
+              class="progress-bar bg-danger"
+              style="width: {{ percentage }}%"
+              title="High ABV (>50%): {{ percentage|round }}%"
+            >
+              {{ percentage|round }}%
+            </div>
+            {% endif %} {% endif %} {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <h2 class="mb-4">Your Recommendations</h2>
+
+  <div class="row">
+    {% for bottle in recommendations %}
+    <div class="col-lg-6 mb-4">
+      <div class="card whisky-card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4 text-center">
+              {% if bottle.image_url %}
+              <img
+                src="{{ bottle.image_url }}"
+                alt="{{ bottle.name }}"
+                class="img-fluid rounded bottle-image mb-3"
+                style="max-height: 200px"
+              />
+              {% else %}
+              <div
+                class="no-image-placeholder rounded"
+                style="
+                  height: 200px;
+                  background-color: #333;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                <i class="fas fa-wine-bottle fa-3x text-muted"></i>
+              </div>
+              {% endif %}
+            </div>
+            <div class="col-md-8">
+              <h3 class="card-title">{{ bottle.name }}</h3>
+
+              <div class="d-flex justify-content-between mb-3">
+                <div>
+                  <span class="badge bg-primary">{{ bottle.spirit_type }}</span>
+                  <span class="badge bg-secondary">{{ bottle.region }}</span>
+                  <span class="badge bg-info">{{ bottle.abv }}% ABV</span>
+                </div>
+                <div>
+                  {% if bottle.total_score %}
+                  <span
+                    class="badge bg-success"
+                    data-bs-toggle="tooltip"
+                    title="Rating Score"
+                  >
+                    <i class="fas fa-star me-1"></i>{{
+                    bottle.total_score|round(1) }}
+                  </span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <p class="mb-1">
+                    <strong>MSRP:</strong> ${{ bottle.msrp|round(2) }}
+                  </p>
+                  {% if bottle.fair_price %}
+                  <p class="mb-1">
+                    <strong>Fair Price:</strong> ${{ bottle.fair_price|round(2)
+                    }}
+                  </p>
+                  {% endif %}
+                </div>
+                <div class="col-md-6">
+                  <div
+                    class="flavor-profile-container"
+                    data-flavors='{
                                             "peated": {{ bottle.flavor_profile_peated|default(0) }},
                                             "sherried": {{ bottle.flavor_profile_sherried|default(0) }},
                                             "fruity": {{ bottle.flavor_profile_fruity|default(0) }},
@@ -153,83 +217,134 @@
                                             "smoky": {{ bottle.flavor_profile_smoky|default(0) }},
                                             "vanilla": {{ bottle.flavor_profile_vanilla|default(0) }},
                                             "caramel": {{ bottle.flavor_profile_caramel|default(0) }}
-                                        }'>
-                                        <!-- JS will populate this -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="recommendation-reason mt-3">
-                        <i class="fas fa-info-circle text-success me-2"></i>
-                        {{ bottle.explanation }}
-                    </div>
+                                        }'
+                  >
+                    <!-- JS will populate this -->
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
+
+          <div class="recommendation-reason mt-3">
+            <i class="fas fa-info-circle text-success me-2"></i>
+            {{ bottle.explanation }}
+          </div>
         </div>
-        {% endfor %}
+      </div>
     </div>
-    
-    <div class="text-center mt-5 mb-3">
-        <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg">
-            <i class="fas fa-search me-2"></i>Try Another Username
-        </a>
+    {% endfor %}
+  </div>
+
+  <div class="text-center mt-5 mb-3">
+    <div class="d-flex justify-content-center gap-3">
+      <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg">
+        <i class="fas fa-search me-2"></i>Try Another Username
+      </a>
+      <a href="https://baxus.co" target="_blank" class="btn btn-success btn-lg">
+        <i class="fas fa-external-link-alt me-2"></i>Explore More on BAXUS
+      </a>
     </div>
+  </div>
 </div>
 
 <!-- Bob Chat Widget -->
 <div class="bob-chat-widget" id="bobChatWidget">
-    <div class="bob-chat-header" id="bobChatHeader">
-        <div class="d-flex align-items-center">
-            <img src="{{ url_for('static', filename='images/bob-avatar.svg') }}" 
-                 alt="Bob" class="bob-avatar me-2" width="24" height="24">
-            <span class="fw-bold">Chat with BOB</span>
-            {% if username %}
-            <span class="badge bg-light text-dark ms-2">@{{ username }}</span>
-            {% endif %}
-        </div>
-        <button type="button" class="btn btn-sm btn-link text-white p-0" id="bobChatToggle">
-            <i class="fas fa-minus"></i>
+  <div class="bob-chat-header" id="bobChatHeader">
+    <div class="d-flex align-items-center">
+      <img
+        src="{{ url_for('static', filename='images/bob-avatar.svg') }}"
+        alt="Bob"
+        class="bob-avatar me-2"
+        width="24"
+        height="24"
+      />
+      <span class="fw-bold">Chat with BOB</span>
+      {% if username %}
+      <span class="badge bg-light text-dark ms-2">@{{ username }}</span>
+      {% endif %}
+    </div>
+    <button
+      type="button"
+      class="btn btn-sm btn-link text-white p-0"
+      id="bobChatToggle"
+    >
+      <i class="fas fa-minus"></i>
+    </button>
+  </div>
+  <div class="bob-chat-body" id="bobChatBody">
+    <div class="bob-messages" id="bobMessages">
+      <!-- Welcome message -->
+      <div class="message bot-message">
+        <p>
+          Hello! I'm Bob, your whisky expert assistant. How can I help you
+          discover the perfect whisky today?
+        </p>
+      </div>
+    </div>
+    <div class="bob-input-area">
+      <div id="bobChatForm" class="d-flex">
+        <input
+          type="text"
+          id="bobChatInput"
+          class="form-control form-control-sm me-2"
+          placeholder="Ask Bob about whisky..."
+        />
+        <button
+          type="button"
+          id="bobChatSend"
+          class="btn btn-primary btn-sm px-3"
+        >
+          <i class="fas fa-paper-plane"></i>
         </button>
-    </div>
-    <div class="bob-chat-body" id="bobChatBody">
-        <div class="bob-messages" id="bobMessages">
-            <!-- Welcome message -->
-            <div class="message bot-message">
-                <p>Hello! I'm Bob, your whisky expert assistant. How can I help you discover the perfect whisky today?</p>
-            </div>
+      </div>
+      <div class="d-flex justify-content-between mt-2">
+        <div class="dropdown">
+          <button
+            class="btn btn-sm btn-link text-muted dropdown-toggle p-0"
+            id="suggestionDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Suggestions
+          </button>
+          <ul
+            class="dropdown-menu suggestion-menu"
+            aria-labelledby="suggestionDropdown"
+          >
+            <li>
+              <a class="dropdown-item suggestion-link" href="#"
+                >What whisky should I try if I like smoky flavors?</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item suggestion-link" href="#"
+                >Tell me about Japanese whisky</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item suggestion-link" href="#"
+                >Good whisky under $50?</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item suggestion-link" href="#"
+                >Compare bourbon and scotch</a
+              >
+            </li>
+          </ul>
         </div>
-        <div class="bob-input-area">
-            <div id="bobChatForm" class="d-flex">
-                <input type="text" id="bobChatInput" class="form-control form-control-sm me-2" 
-                       placeholder="Ask Bob about whisky...">
-                <button type="button" id="bobChatSend" class="btn btn-primary btn-sm px-3">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-            <div class="d-flex justify-content-between mt-2">
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-link text-muted dropdown-toggle p-0" 
-                            id="suggestionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        Suggestions
-                    </button>
-                    <ul class="dropdown-menu suggestion-menu" aria-labelledby="suggestionDropdown">
-                        <li><a class="dropdown-item suggestion-link" href="#">What whisky should I try if I like smoky flavors?</a></li>
-                        <li><a class="dropdown-item suggestion-link" href="#">Tell me about Japanese whisky</a></li>
-                        <li><a class="dropdown-item suggestion-link" href="#">Good whisky under $50?</a></li>
-                        <li><a class="dropdown-item suggestion-link" href="#">Compare bourbon and scotch</a></li>
-                    </ul>
-                </div>
-                <button type="button" id="resetBobChat" class="btn btn-sm btn-link text-muted p-0">
-                    <i class="fas fa-redo-alt me-1"></i>Reset
-                </button>
-            </div>
-        </div>
+        <button
+          type="button"
+          id="resetBobChat"
+          class="btn btn-sm btn-link text-muted p-0"
+        >
+          <i class="fas fa-redo-alt me-1"></i>Reset
+        </button>
+      </div>
     </div>
+  </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
+{% endblock %} {% block extra_js %}
 <script src="{{ url_for('static', filename='js/bob-chat.js') }}"></script>
 {% endblock %}
