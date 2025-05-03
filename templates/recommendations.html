@@ -102,7 +102,7 @@ block content %}
         </h5>
         <div
           class="flavor-profile-container"
-          data-flavors="{{ preferences.flavor_profiles|tojson|safe }}"
+          data-flavors="{{ preferences.flavor_profiles|tojson }}"
         >
           <!-- JS will populate this -->
         </div>
@@ -207,15 +207,15 @@ block content %}
                 <div class="col-md-6">
                   <div
                     class="flavor-profile-container"
-                    data-flavors="{{ {
-                      'peated': bottle.flavor_profile_peated|default(0),
-                      'sherried': bottle.flavor_profile_sherried|default(0),
-                      'fruity': bottle.flavor_profile_fruity|default(0),
-                      'spicy': bottle.flavor_profile_spicy|default(0),
-                      'smoky': bottle.flavor_profile_smoky|default(0),
-                      'vanilla': bottle.flavor_profile_vanilla|default(0),
-                      'caramel': bottle.flavor_profile_caramel|default(0)
-                    }|tojson|safe }}"
+                    data-flavors='{
+                                            "peated": {{ bottle.flavor_profile_peated|default(0) }},
+                                            "sherried": {{ bottle.flavor_profile_sherried|default(0) }},
+                                            "fruity": {{ bottle.flavor_profile_fruity|default(0) }},
+                                            "spicy": {{ bottle.flavor_profile_spicy|default(0) }},
+                                            "smoky": {{ bottle.flavor_profile_smoky|default(0) }},
+                                            "vanilla": {{ bottle.flavor_profile_vanilla|default(0) }},
+                                            "caramel": {{ bottle.flavor_profile_caramel|default(0) }}
+                                        }'
                   >
                     <!-- JS will populate this -->
                   </div>

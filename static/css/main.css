@@ -146,30 +146,18 @@ h2:after {
 .flavor-profile-container {
   background-color: #fff;
   border-radius: 8px;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid var(--baxus-border);
-  min-height: 45px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
 }
 
 .flavor-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 16px;
-  font-size: 0.8rem;
+  display: inline-block;
+  padding: 3px 8px;
+  margin: 2px;
+  border-radius: 12px;
+  font-size: 0.75rem;
   color: #fff;
   background-color: var(--baxus-teal);
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: default;
-}
-
-.flavor-tag:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .flavor-tag[data-level="high"] {

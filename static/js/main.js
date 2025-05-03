@@ -37,17 +37,19 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Flavor profile visualization
-  const flavorContainers = document.querySelectorAll(".flavor-profile-container");
-  
+  const flavorContainers = document.querySelectorAll(
+    ".flavor-profile-container"
+  );
+
   flavorContainers.forEach((container) => {
     let flavorData;
     try {
       // Try to parse the flavor data, with better error handling
-      const rawData = container.getAttribute('data-flavors');
-      console.log('Raw flavor data:', rawData); // Debug log
-      flavorData = JSON.parse(rawData || '{}');
+      const rawData = container.getAttribute("data-flavors");
+      console.log("Raw flavor data:", rawData); // Debug log
+      flavorData = JSON.parse(rawData || "{}");
     } catch (e) {
-      console.error('Error parsing flavor data:', e);
+      console.error("Error parsing flavor data:", e);
       flavorData = {};
     }
 
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
     container.innerHTML = "";
 
     // Debug log
-    console.log('Parsed flavor data:', flavorData);
+    console.log("Parsed flavor data:", flavorData);
 
     // Create tag-based flavor profile visualization
     for (const [flavor, value] of Object.entries(flavorData)) {
@@ -76,7 +78,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         flavorTag.setAttribute("data-level", level);
-        flavorTag.textContent = flavor.charAt(0).toUpperCase() + flavor.slice(1);
+        flavorTag.textContent =
+          flavor.charAt(0).toUpperCase() + flavor.slice(1);
         flavorTag.title = `${flavor}: ${Math.round(numValue)}%`;
         container.appendChild(flavorTag);
       }
