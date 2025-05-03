@@ -1,62 +1,101 @@
 <!-- Bob Chat Widget Component -->
 <div class="chat-widget">
-    <div class="chat-widget-header" id="chatWidgetHeader">
-        <div class="d-flex align-items-center">
-            <div class="avatar-container me-2">
-                <img src="{{ url_for('static', filename='images/bob-avatar.svg') }}" 
-                     alt="Bob the Whisky Expert" 
-                     class="rounded-circle" 
-                     width="24" height="24">
-            </div>
-            <span class="fw-bold text-white">Chat with BOB</span>
-            {% if username %}
-            <span class="badge bg-secondary ms-2 small">@{{ username }}</span>
-            {% endif %}
-        </div>
-        <div>
-            <button class="btn btn-sm text-white" id="chatToggleBtn">
-                <i class="fas fa-minus"></i>
-            </button>
-        </div>
+  <div class="chat-widget-header" id="chatWidgetHeader">
+    <div class="d-flex align-items-center">
+      <div class="avatar-container me-2">
+        <img
+          src="{{ url_for('static', filename='images/bob-avatar.svg') }}"
+          alt="Bob the Whisky Expert"
+          class="rounded-circle"
+          width="24"
+          height="24"
+        />
+      </div>
+      <span class="fw-bold text-white">Chat with BOB</span>
+      {% if username %}
+      <span class="badge bg-secondary ms-2 small">@{{ username }}</span>
+      {% endif %}
     </div>
-    
-    <div class="chat-widget-body" id="chatWidgetBody">
-        <div id="chat-messages" class="chat-container mb-3">
-            <!-- Welcome message from Bob -->
-            <div class="message-row">
-                <div class="message bot-message">
-                    <p>Hello! I'm Bob, your whisky expert assistant. How can I help you discover the perfect whisky today?</p>
-                </div>
-            </div>
-            <!-- Messages will be added here dynamically -->
-        </div>
-        
-        <form id="chat-form" class="d-flex">
-            <input type="text" id="user-input" class="form-control form-control-sm me-2" 
-                   placeholder="Ask Bob about whisky..." required>
-            <button type="submit" class="btn btn-primary btn-sm">
-                <i class="fas fa-paper-plane"></i>
-            </button>
-        </form>
-        
-        <div class="mt-2 d-flex justify-content-between align-items-center">
-            <div class="dropdown">
-                <button class="btn btn-sm btn-link text-muted dropdown-toggle" 
-                        type="button" id="suggestionDropdown" 
-                        data-bs-toggle="dropdown" 
-                        aria-expanded="false">
-                    Suggestions
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="suggestionDropdown">
-                    <li><a class="dropdown-item suggestion-link" href="#">What whisky should I try if I like smoky flavors?</a></li>
-                    <li><a class="dropdown-item suggestion-link" href="#">Tell me about Japanese whisky</a></li>
-                    <li><a class="dropdown-item suggestion-link" href="#">Good whisky under $50?</a></li>
-                    <li><a class="dropdown-item suggestion-link" href="#">Compare bourbon and scotch</a></li>
-                </ul>
-            </div>
-            <button id="reset-chat" class="btn btn-sm btn-link text-muted">
-                <i class="fas fa-redo-alt"></i> Reset
-            </button>
-        </div>
+    <div>
+      <button
+        class="btn btn-sm text-white"
+        id="chatToggleBtn"
+        title="Toggle chat"
+      >
+        <i class="fas fa-minus"></i>
+      </button>
     </div>
+  </div>
+
+  <div class="chat-widget-body" id="chatWidgetBody">
+    <div id="chat-messages" class="chat-container mb-3">
+      <!-- Welcome message from Bob -->
+      <div class="message-row">
+        <div class="message bot-message">
+          <p>
+            Hello! I'm Bob, your whisky expert assistant. How can I help you
+            discover the perfect whisky today?
+          </p>
+        </div>
+      </div>
+      <!-- Messages will be added here dynamically -->
+    </div>
+
+    <form id="chat-form" class="d-flex">
+      <input
+        type="text"
+        id="user-input"
+        class="form-control form-control-sm me-2"
+        placeholder="Ask Bob about whisky..."
+        required
+      />
+      <button type="submit" class="btn btn-primary btn-sm" title="Send message">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </form>
+
+    <div class="mt-2 d-flex justify-content-between align-items-center">
+      <div class="dropdown">
+        <button
+          class="btn btn-sm btn-link text-muted dropdown-toggle"
+          type="button"
+          id="suggestionDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          title="Suggestions"
+        >
+          Suggestions
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="suggestionDropdown">
+          <li>
+            <a class="dropdown-item suggestion-link" href="#"
+              >What whisky should I try if I like smoky flavors?</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item suggestion-link" href="#"
+              >Tell me about Japanese whisky</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item suggestion-link" href="#"
+              >Good whisky under $50?</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item suggestion-link" href="#"
+              >Compare bourbon and scotch</a
+            >
+          </li>
+        </ul>
+      </div>
+      <button
+        id="reset-chat"
+        class="btn btn-sm btn-link text-muted"
+        title="Reset chat"
+      >
+        <i class="fas fa-redo-alt"></i> Reset
+      </button>
+    </div>
+  </div>
 </div>

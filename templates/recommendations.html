@@ -56,32 +56,40 @@ block content %}
           <p class="mb-1">
             Average Bottle: ${{ preferences.average_bottle_price|round(2) }}
           </p>
-          <div class="progress" style="height: 10px">
+          <div class="progress small-progress">
             {% for range, percentage in preferences.price_ranges.items() %} {%
             if percentage > 0 %} {% if range == 'entry' %}
             <div
-              class="progress-bar bg-success"
-              style="width: {{ percentage }}%"
+              class="progress-bar progress-bar-entry"
+              data-width="{{ percentage }}"
               title="Entry ($0-50): {{ percentage|round }}%"
-            ></div>
+            >
+              {{ percentage|round }}%
+            </div>
             {% elif range == 'mid' %}
             <div
-              class="progress-bar bg-info"
-              style="width: {{ percentage }}%"
+              class="progress-bar progress-bar-mid"
+              data-width="{{ percentage }}"
               title="Mid ($51-100): {{ percentage|round }}%"
-            ></div>
+            >
+              {{ percentage|round }}%
+            </div>
             {% elif range == 'premium' %}
             <div
-              class="progress-bar bg-warning"
-              style="width: {{ percentage }}%"
+              class="progress-bar progress-bar-premium"
+              data-width="{{ percentage }}"
               title="Premium ($101-200): {{ percentage|round }}%"
-            ></div>
+            >
+              {{ percentage|round }}%
+            </div>
             {% elif range == 'luxury' %}
             <div
-              class="progress-bar bg-danger"
-              style="width: {{ percentage }}%"
+              class="progress-bar progress-bar-luxury"
+              data-width="{{ percentage }}"
               title="Luxury ($201+): {{ percentage|round }}%"
-            ></div>
+            >
+              {{ percentage|round }}%
+            </div>
             {% endif %} {% endif %} {% endfor %}
           </div>
         </div>
@@ -94,7 +102,7 @@ block content %}
         </h5>
         <div
           class="flavor-profile-container"
-          data-flavors="{{ preferences.flavor_profiles|tojson }}"
+          data-flavors="{{ preferences.flavor_profiles|tojson|safe }}"
         >
           <!-- JS will populate this -->
         </div>
@@ -106,28 +114,28 @@ block content %}
           <i class="fas fa-percentage me-2 text-success"></i>ABV Preferences
         </h5>
         <div class="mt-2">
-          <div class="progress" style="height: 20px">
+          <div class="progress large-progress">
             {% for level, percentage in preferences.abv_preferences.items() %}
             {% if percentage > 0 %} {% if level == 'low' %}
             <div
-              class="progress-bar"
-              style="width: {{ percentage }}%"
+              class="progress-bar progress-bar-low"
+              data-width="{{ percentage }}"
               title="Low ABV (<43%): {{ percentage|round }}%"
             >
               {{ percentage|round }}%
             </div>
             {% elif level == 'medium' %}
             <div
-              class="progress-bar bg-info"
-              style="width: {{ percentage }}%"
+              class="progress-bar progress-bar-medium"
+              data-width="{{ percentage }}"
               title="Medium ABV (43-50%): {{ percentage|round }}%"
             >
               {{ percentage|round }}%
             </div>
             {% elif level == 'high' %}
             <div
-              class="progress-bar bg-danger"
-              style="width: {{ percentage }}%"
+              class="progress-bar progress-bar-high"
+              data-width="{{ percentage }}"
               title="High ABV (>50%): {{ percentage|round }}%"
             >
               {{ percentage|round }}%
@@ -153,20 +161,10 @@ block content %}
               <img
                 src="{{ bottle.image_url }}"
                 alt="{{ bottle.name }}"
-                class="img-fluid rounded bottle-image mb-3"
-                style="max-height: 200px"
+                class="img-fluid rounded bottle-image"
               />
               {% else %}
-              <div
-                class="no-image-placeholder rounded"
-                style="
-                  height: 200px;
-                  background-color: #333;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
+              <div class="no-image-placeholder rounded">
                 <i class="fas fa-wine-bottle fa-3x text-muted"></i>
               </div>
               {% endif %}
@@ -209,15 +207,15 @@ block content %}
                 <div class="col-md-6">
                   <div
                     class="flavor-profile-container"
-                    data-flavors='{
-                                            "peated": {{ bottle.flavor_profile_peated|default(0) }},
-                                            "sherried": {{ bottle.flavor_profile_sherried|default(0) }},
-                                            "fruity": {{ bottle.flavor_profile_fruity|default(0) }},
-                                            "spicy": {{ bottle.flavor_profile_spicy|default(0) }},
-                                            "smoky": {{ bottle.flavor_profile_smoky|default(0) }},
-                                            "vanilla": {{ bottle.flavor_profile_vanilla|default(0) }},
-                                            "caramel": {{ bottle.flavor_profile_caramel|default(0) }}
-                                        }'
+                    data-flavors="{{ {
+                      'peated': bottle.flavor_profile_peated|default(0),
+                      'sherried': bottle.flavor_profile_sherried|default(0),
+                      'fruity': bottle.flavor_profile_fruity|default(0),
+                      'spicy': bottle.flavor_profile_spicy|default(0),
+                      'smoky': bottle.flavor_profile_smoky|default(0),
+                      'vanilla': bottle.flavor_profile_vanilla|default(0),
+                      'caramel': bottle.flavor_profile_caramel|default(0)
+                    }|tojson|safe }}"
                   >
                     <!-- JS will populate this -->
                   </div>
@@ -238,10 +236,20 @@ block content %}
 
   <div class="text-center mt-5 mb-3">
     <div class="d-flex justify-content-center gap-3">
-      <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg">
+      <a
+        href="{{ url_for('index') }}"
+        class="btn btn-outline-primary btn-lg"
+        title="Try another username"
+      >
         <i class="fas fa-search me-2"></i>Try Another Username
       </a>
-      <a href="https://baxus.co" target="_blank" class="btn btn-success btn-lg">
+      <a
+        href="https://baxus.co"
+        target="_blank"
+        rel="noopener"
+        class="btn btn-success btn-lg"
+        title="Explore more on BAXUS"
+      >
         <i class="fas fa-external-link-alt me-2"></i>Explore More on BAXUS
       </a>
     </div>
@@ -268,6 +276,7 @@ block content %}
       type="button"
       class="btn btn-sm btn-link text-white p-0"
       id="bobChatToggle"
+      title="Toggle chat"
     >
       <i class="fas fa-minus"></i>
     </button>
@@ -283,21 +292,22 @@ block content %}
       </div>
     </div>
     <div class="bob-input-area">
-      <div id="bobChatForm" class="d-flex">
+      <form id="bobChatForm" class="d-flex">
         <input
           type="text"
           id="bobChatInput"
           class="form-control form-control-sm me-2"
           placeholder="Ask Bob about whisky..."
+          required
         />
         <button
-          type="button"
-          id="bobChatSend"
+          type="submit"
           class="btn btn-primary btn-sm px-3"
+          title="Send message"
         >
           <i class="fas fa-paper-plane"></i>
         </button>
-      </div>
+      </form>
       <div class="d-flex justify-content-between mt-2">
         <div class="dropdown">
           <button
@@ -305,6 +315,7 @@ block content %}
             id="suggestionDropdown"
             data-bs-toggle="dropdown"
             aria-expanded="false"
+            title="Suggestions"
           >
             Suggestions
           </button>
@@ -338,6 +349,7 @@ block content %}
           type="button"
           id="resetBobChat"
           class="btn btn-sm btn-link text-muted p-0"
+          title="Reset chat"
         >
           <i class="fas fa-redo-alt me-1"></i>Reset
         </button>

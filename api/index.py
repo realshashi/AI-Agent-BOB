@@ -1,147 +1,80 @@
 """
-Main entry point for Vercel deployment
-Integrates both API and frontend routes
+Serverless entry point for Vercel
+This is a lightweight WSGI handler for Vercel's serverless environment
 """
 import os
 import sys
 import logging
 import traceback
-from flask import Flask, jsonify, request, render_template
-from api.middleware import apply_middleware
+from flask import Flask, jsonify
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Configure logging for Vercel
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
-# Add parent directory to path
+# Set Vercel environment flag - this must happen before any imports
+os.environ['VERCEL'] = '1'
+
+# Add parent directory to path so we can import our modules
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 logger.info(f"Added parent directory to path: {parent_dir}")
 
-# Initialize Flask app
-app = Flask(__name__,
-           template_folder='../templates',
-           static_folder='../static')
-app.secret_key = os.environ.get("SECRET_KEY", "bob-whisky-expert-secret")
+# Fallback app in case the main app fails to load
+fallback_app = Flask(__name__)
 
-# Apply middleware
-apply_middleware(app)
+@fallback_app.route('/')
+def fallback_index():
+    return jsonify({
+        "status": "error", 
+        "message": "Failed to load the main application. See logs for details."
+    })
 
-# Import route handlers
+@fallback_app.route('/_debug')
+def debug_info():
+    """Debugging endpoint for Vercel deployment"""
+    return jsonify({
+        "environment": dict(os.environ),
+        "python_path": sys.path,
+        "python_version": sys.version,
+        "working_directory": os.getcwd(),
+        "available_files": os.listdir(parent_dir)
+    })
+
+@fallback_app.route('/api/status')
+def fallback_status():
+    """Status endpoint when main app fails to load"""
+    return jsonify({
+        "status": "error",
+        "service": "Bob the Whisky Expert API - Fallback Mode",
+        "error": "Main application failed to load"
+    })
+
+# Try to import the main app with robust error handling
 try:
-    from api.vercel_app_routes import app as frontend_app
-    from api.static import app as static_app
-    ROUTES_LOADED = True
-except Exception as e:
-    logger.error(f"Error importing route handlers: {str(e)}")
+    # Import main module first which handles dotenv properly
+    import main
+    logger.info("Successfully imported main module")
+    
+    # Get app from main module
+    app = main.app
+    logger.info("Successfully loaded Flask app from main module")
+    
+    # Ensure we have the application
+    application = app
+    
+except ImportError as e:
+    logger.error(f"Import error: {str(e)}")
     logger.error(traceback.format_exc())
-    ROUTES_LOADED = False
-
-# Register frontend routes
-if ROUTES_LOADED:
-    app.register_blueprint(frontend_app)
-    app.register_blueprint(static_app, url_prefix='/static')
-
-# API Routes
-@app.route('/api/chat', methods=['POST'])
-def chat_api():
-    """Chat API endpoint"""
-    if not ROUTES_LOADED:
-        return jsonify({"error": "Service unavailable"}), 503
+    application = fallback_app
     
-    try:
-        from bob_chat import chat_with_bob, get_rule_based_response
-        data = request.json
-        if not data or 'message' not in data:
-            return jsonify({"error": "Missing message"}), 400
-        
-        # Check OpenAI API key
-        if not os.environ.get("OPENAI_API_KEY"):
-            return jsonify({
-                "response": "Service unavailable - API key missing",
-                "error": "api_key_missing"
-            }), 503
-        
-        # Try rule-based response first
-        rule_response = get_rule_based_response(data['message'])
-        if rule_response:
-            return jsonify({"response": rule_response})
-        
-        # Use chat function
-        response = chat_with_bob(data['message'])
-        return jsonify({"response": response})
-        
-    except Exception as e:
-        logger.exception("Error in chat endpoint")
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/recommendations', methods=['GET'])
-def recommendations_api():
-    """Recommendations API endpoint"""
-    if not ROUTES_LOADED:
-        return jsonify({"error": "Service unavailable"}), 503
-    
-    try:
-        from recommendation_engine import analyze_preferences, generate_recommendations
-        from baxus_api import get_user_bar_data
-        
-        username = request.args.get('username')
-        if not username:
-            return jsonify({"error": "Username required"}), 400
-        
-        user_data = get_user_bar_data(username)
-        if not user_data:
-            return jsonify({"error": "User not found"}), 404
-        
-        preferences = analyze_preferences(user_data)
-        recommendations = generate_recommendations(preferences, user_data)
-        
-        return jsonify({
-            "username": username,
-            "preferences": preferences,
-            "recommendations": recommendations
-        })
-        
-    except Exception as e:
-        logger.exception("Error in recommendations endpoint")
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/status')
-def status():
-    """Status endpoint"""
-    return jsonify({
-        "status": "ok",
-        "service": "Bob the Whisky Expert API",
-        "version": "1.0.0",
-        "routes_loaded": ROUTES_LOADED,
-        "openai_configured": bool(os.environ.get("OPENAI_API_KEY"))
-    })
-
-@app.route('/')
-def index():
-    """Root endpoint"""
-    return jsonify({
-        "service": "Bob the Whisky Expert API",
-        "version": "1.0.0",
-        "endpoints": {
-            "/api/chat": "Chat with Bob (POST)",
-            "/api/recommendations": "Get whisky recommendations (GET)",
-            "/api/status": "Service status (GET)"
-        }
-    })
-
-# Error Handlers
-@app.errorhandler(404)
-def not_found(e):
-    if request.path.startswith('/api/'):
-        return jsonify({"error": "Not found"}), 404
-    return render_template('error.html', error="Page not found"), 404
-
-@app.errorhandler(500)
-def server_error(e):
-    if request.path.startswith('/api/'):
-        return jsonify({"error": "Internal server error"}), 500
-    return render_template('error.html', error="Server error"), 500
+except Exception as e:
+    logger.error(f"Error loading app: {str(e)}")
+    logger.error(traceback.format_exc()) 
+    application = fallback_app
 
 # This is required for Vercel's Python runtime
-application = app
+app = application

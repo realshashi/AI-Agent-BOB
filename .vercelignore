@@ -1,74 +1,24 @@
-# Python
+# Vercel ignore file
 
-**pycache**
-_.pyc
-_.pyo
-_.pyd
+**pycache**/
+_.py[cod]
+_$py.class
+_.so
 .Python
 venv/
 env/
-.env
-_.db
-
-# Development
-
-tests/
-\_.test.py
-test\_\_.py
-attached_assets/
-docker-compose*
-Dockerfile*
-\*.md
-!README.md
-
-# Local config
-
-.vscode/
-.idea/
-\*.log
-
-# Cache
-
-\*.cache
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+_.egg-info/
+.installed.cfg
+\*.egg
 bob_cache.db
-
-# Documentation
-
-docs/
-INSTALLATION.md
-USAGE.md
-VERCEL_DEPLOYMENT\*.md
-
-# Temporary files
-
-_.swp
-_.swo
-.DS_Store
-
-# Vercel Ignore
-
-.git
-.gitignore
-.env
-_.pyc
-**pycache**
-.pytest_cache
-_.db
-bob_cache.db
-_.sqlite3
-.venv
-venv
-ENV
-env
-.DS_Store
-node_modules
-_.log
-.coverage
-htmlcov
-.tox
-.nox
-.hypothesis
-_.egg-info
-dist
-build
-_.egg
