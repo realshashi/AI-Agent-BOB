@@ -40,47 +40,32 @@ document.addEventListener("DOMContentLoaded", function () {
   const flavorContainers = document.querySelectorAll(
     ".flavor-profile-container"
   );
-
   flavorContainers.forEach((container) => {
-    let flavorData;
-    try {
-      // Try to parse the flavor data, with better error handling
-      const rawData = container.getAttribute("data-flavors");
-      console.log("Raw flavor data:", rawData); // Debug log
-      flavorData = JSON.parse(rawData || "{}");
-    } catch (e) {
-      console.error("Error parsing flavor data:", e);
-      flavorData = {};
-    }
+    const flavorData = JSON.parse(container.dataset.flavors || "{}");
 
     // Clear any existing content
     container.innerHTML = "";
 
-    // Debug log
-    console.log("Parsed flavor data:", flavorData);
-
     // Create tag-based flavor profile visualization
     for (const [flavor, value] of Object.entries(flavorData)) {
-      const numValue = Number(value);
-      if (numValue > 0) {
+      if (value > 0) {
         // Skip values that are too low to be meaningful
-        if (numValue < 10) continue;
+        if (value < 10) continue;
 
         const flavorTag = document.createElement("span");
         flavorTag.className = "flavor-tag";
 
         // Determine level based on value
         let level = "low";
-        if (numValue > 70) {
+        if (value > 70) {
           level = "high";
-        } else if (numValue > 35) {
+        } else if (value > 35) {
           level = "medium";
         }
 
         flavorTag.setAttribute("data-level", level);
         flavorTag.textContent =
           flavor.charAt(0).toUpperCase() + flavor.slice(1);
-        flavorTag.title = `${flavor}: ${Math.round(numValue)}%`;
         container.appendChild(flavorTag);
       }
     }
