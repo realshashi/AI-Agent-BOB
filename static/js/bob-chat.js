@@ -1,14 +1,14 @@
 // Bob Chat Widget JavaScript
 document.addEventListener("DOMContentLoaded", function () {
   // Chat widget elements
-  const chatWidget = document.querySelector(".chat-widget");
-  const chatHeader = document.getElementById("chatWidgetHeader");
-  const chatBody = document.getElementById("chatWidgetBody");
-  const chatToggle = document.getElementById("chatToggleBtn");
-  const chatForm = document.getElementById("chat-form");
-  const chatInput = document.getElementById("user-input");
-  const chatMessages = document.getElementById("chat-messages");
-  const resetButton = document.getElementById("reset-chat");
+  const chatWidget = document.getElementById("bobChatWidget");
+  const chatHeader = document.getElementById("bobChatHeader");
+  const chatBody = document.getElementById("bobChatBody");
+  const chatToggle = document.getElementById("bobChatToggle");
+  const chatForm = document.getElementById("bobChatForm");
+  const chatInput = document.getElementById("bobChatInput");
+  const chatMessages = document.getElementById("bobMessages");
+  const resetButton = document.getElementById("resetBobChat");
   const suggestionLinks = document.querySelectorAll(".suggestion-link");
 
   console.log("Chat elements loaded", {
@@ -29,22 +29,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (isCollapsed) {
       chatBody.classList.remove("collapsed");
-      chatToggle.innerHTML = '<i class="fas fa-minus"></i>';
+      chatToggle.querySelector("i").className = "fas fa-minus";
       setTimeout(() => chatInput.focus(), 300);
     } else {
       chatBody.classList.add("collapsed");
-      chatToggle.innerHTML = '<i class="fas fa-plus"></i>';
+      chatToggle.querySelector("i").className = "fas fa-plus";
     }
   }
 
-  // Click handlers
-  chatHeader.addEventListener("click", function (e) {
-    if (e.target !== chatToggle && !chatToggle.contains(e.target)) {
-      toggleChatWidget();
-    }
-  });
-
+  // Click handlers for chat toggle
   chatToggle.addEventListener("click", function (e) {
+    e.preventDefault();
     e.stopPropagation();
     toggleChatWidget();
   });
@@ -102,22 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Add bot response
         const botMessageDiv = document.createElement("div");
-
-        // Add error class if there was an error
-        if (data.error) {
-          botMessageDiv.className = "message bot-message error";
-          console.warn("Chat API error:", data.error);
-
-          // Add a suggestion to contact admin for API key issues
-          if (data.error === "api_key_missing") {
-            const systemMsg = document.createElement("div");
-            systemMsg.className = "system-message";
-            systemMsg.textContent = "OpenAI API key needs to be configured";
-            chatMessages.appendChild(systemMsg);
-          }
-        } else {
-          botMessageDiv.className = "message bot-message";
-        }
+        botMessageDiv.className = "message bot-message";
 
         // Format the message with markdown-like syntax
         let formattedContent = data.response
@@ -159,48 +139,50 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       const suggestion = this.textContent.trim();
       chatInput.value = suggestion;
-      sendMessage(suggestion);
-      chatInput.value = "";
+      chatForm.dispatchEvent(new Event("submit"));
     });
   });
 
   // Reset chat
-  resetButton.addEventListener("click", function (e) {
-    e.stopPropagation();
-    console.log("Resetting chat");
+  if (resetButton) {
+    resetButton.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("Resetting chat");
 
-    // Clear messages except welcome message
-    while (chatMessages.children.length > 1) {
-      chatMessages.removeChild(chatMessages.lastChild);
-    }
+      // Clear messages except welcome message
+      while (chatMessages.children.length > 1) {
+        chatMessages.removeChild(chatMessages.lastChild);
+      }
 
-    // Reset server-side chat history
-    fetch("/chat/reset", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Reset response:", data);
-        if (data.success) {
-          // Show reset confirmation
-          const resetMsg = document.createElement("div");
-          resetMsg.className = "system-message";
-          resetMsg.textContent = "Chat history has been reset";
-          chatMessages.appendChild(resetMsg);
-
-          // Remove after 2 seconds
-          setTimeout(() => {
-            chatMessages.removeChild(resetMsg);
-          }, 2000);
-        }
+      // Reset server-side chat history
+      fetch("/chat/reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
-      .catch((error) => {
-        console.error("Error resetting chat:", error);
-      });
-  });
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Reset response:", data);
+          if (data.success) {
+            // Show reset confirmation
+            const resetMsg = document.createElement("div");
+            resetMsg.className = "system-message";
+            resetMsg.textContent = "Chat history has been reset";
+            chatMessages.appendChild(resetMsg);
+
+            // Remove after 2 seconds
+            setTimeout(() => {
+              chatMessages.removeChild(resetMsg);
+            }, 2000);
+          }
+        })
+        .catch((error) => {
+          console.error("Error resetting chat:", error);
+        });
+    });
+  }
 
   console.log("Chat widget initialized");
 });

@@ -46,12 +46,13 @@
   padding: 15px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .bob-input-area {
   padding: 10px;
-  border-top: 1px solid #e1e4e8;
-  background-color: #fff;
+  border-top: 1px solid var(--bs-border-color);
+  background-color: var(--bs-body-bg);
 }
 
 .message {
@@ -92,9 +93,9 @@
   color: #6c757d;
   font-size: 0.8rem;
   padding: 5px 10px;
-  background-color: #f8f9fa;
+  background-color: var(--bs-light);
   border-radius: 15px;
-  border: 1px solid #e1e4e8;
+  border: 1px solid var(--bs-border-color);
   margin: 5px 0;
 }
 
