@@ -1,250 +1,189 @@
 /* Main styles for Bob the Whisky Expert - BAXUS Light Theme */
 
 :root {
-  --baxus-teal: #2f7d77;
-  --baxus-dark-teal: #276661;
-  --baxus-light-teal: #e9f5f4;
-  --baxus-gold: #d4b174;
-  --baxus-text: #333333;
-  --baxus-light-gray: #f8f9fa;
-  --baxus-border: #e1e4e8;
-  --baxus-button-bg: #2f7d77;
+    --baxus-teal: #2F7D77;
+    --baxus-dark-teal: #276661;
+    --baxus-light-teal: #e9f5f4;
+    --baxus-gold: #d4b174;
+    --baxus-text: #333333;
+    --baxus-light-gray: #f8f9fa;
+    --baxus-border: #e1e4e8;
+    --baxus-button-bg: #2F7D77;
 }
 
 body {
-  color: var(--baxus-text);
-  background-color: #fff;
+    color: var(--baxus-text);
+    background-color: #fff;
 }
 
 /* Whisky card styling */
 .whisky-card {
-  background-color: #fff;
-  border: 1px solid var(--baxus-border);
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s, box-shadow 0.3s;
-  overflow: hidden;
+    background-color: #fff;
+    border: 1px solid var(--baxus-border);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
 }
 
 .whisky-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .whisky-card .card-title {
-  color: var(--baxus-teal);
-  font-weight: 600;
+    color: var(--baxus-teal);
+    font-weight: 600;
 }
 
 .bottle-image {
-  max-height: 200px;
-  object-fit: contain;
-  background-color: #fff;
-  padding: 10px;
-  border-radius: 8px;
-  transition: transform 0.3s;
+    max-height: 200px;
+    object-fit: contain;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    transition: transform 0.3s;
 }
 
 .bottle-image:hover {
-  transform: scale(1.05);
+    transform: scale(1.05);
 }
 
 .recommendation-reason {
-  background-color: var(--baxus-light-teal);
-  border-left: 3px solid var(--baxus-teal);
-  padding: 10px 15px;
-  margin-top: 15px;
-  font-style: italic;
-  border-radius: 0 4px 4px 0;
-  color: var(--baxus-text);
+    background-color: var(--baxus-light-teal);
+    border-left: 3px solid var(--baxus-teal);
+    padding: 10px 15px;
+    margin-top: 15px;
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+    color: var(--baxus-text);
 }
 
 /* Button styling */
 .btn-primary {
-  background-color: var(--baxus-teal);
-  border-color: var(--baxus-teal);
+    background-color: var(--baxus-teal);
+    border-color: var(--baxus-teal);
 }
 
-.btn-primary:hover,
-.btn-primary:focus,
+.btn-primary:hover, 
+.btn-primary:focus, 
 .btn-primary:active {
-  background-color: var(--baxus-dark-teal);
-  border-color: var(--baxus-dark-teal);
+    background-color: var(--baxus-dark-teal);
+    border-color: var(--baxus-dark-teal);
 }
 
 .btn-outline-primary {
-  color: var(--baxus-teal);
-  border-color: var(--baxus-teal);
+    color: var(--baxus-teal);
+    border-color: var(--baxus-teal);
 }
 
 .btn-outline-primary:hover {
-  background-color: var(--baxus-teal);
-  border-color: var(--baxus-teal);
+    background-color: var(--baxus-teal);
+    border-color: var(--baxus-teal);
 }
 
 /* Badge styling */
 .badge.bg-primary {
-  background-color: var(--baxus-teal) !important;
+    background-color: var(--baxus-teal) !important;
 }
 
 .badge.bg-secondary {
-  background-color: #6c757d !important;
+    background-color: #6c757d !important;
 }
 
 .badge.bg-info {
-  background-color: #0dcaf0 !important;
+    background-color: #0dcaf0 !important;
 }
 
 .badge.bg-warning {
-  background-color: var(--baxus-gold) !important;
+    background-color: var(--baxus-gold) !important;
 }
 
 .badge.bg-success {
-  background-color: var(--baxus-teal) !important;
+    background-color: var(--baxus-teal) !important;
 }
 
 /* Preference badges */
 .preference-badge {
-  margin-right: 5px;
-  margin-bottom: 5px;
-  padding: 5px 10px;
-  font-size: 0.85rem;
-  background-color: #ffffff !important;
-  color: var(--baxus-text) !important;
-  border: 1px solid var(--baxus-teal);
-  font-weight: 500;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    font-size: 0.85rem;
+    background-color: var(--baxus-light-gray) !important;
+    color: var(--baxus-text) !important;
+    border: 1px solid var(--baxus-border);
 }
 
 /* Heading styling */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--baxus-text);
+h1, h2, h3, h4, h5, h6 {
+    color: var(--baxus-text);
 }
 
 h2 {
-  font-weight: 600;
-  position: relative;
-  padding-bottom: 8px;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 8px;
 }
 
 h2:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 50px;
-  height: 3px;
-  background-color: var(--baxus-teal);
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--baxus-teal);
 }
 
 /* Flavor profile styling */
 .flavor-profile-container {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 10px;
-  border: 1px solid var(--baxus-border);
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid var(--baxus-border);
 }
 
 .flavor-tag {
-  display: inline-block;
-  padding: 3px 8px;
-  margin: 2px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  color: #fff;
-  background-color: var(--baxus-teal);
+    display: inline-block;
+    padding: 3px 8px;
+    margin: 2px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: #fff;
+    background-color: var(--baxus-teal);
 }
 
 .flavor-tag[data-level="high"] {
-  background-color: var(--baxus-teal);
-  font-weight: bold;
+    background-color: var(--baxus-teal);
+    font-weight: bold;
 }
 
 .flavor-tag[data-level="medium"] {
-  background-color: #5bc0be;
+    background-color: #5BC0BE;
 }
 
 .flavor-tag[data-level="low"] {
-  background-color: #78c0e0;
-  color: var(--baxus-text);
+    background-color: #78C0E0;
+    color: var(--baxus-text);
 }
 
 /* Preference section styling */
 .preference-section {
-  background-color: var(--baxus-light-teal);
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 30px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-/* Loading spinner styling */
-.loading-spinner {
-  display: none;
-  text-align: center;
-  padding: 1rem 0;
-  margin-top: 1rem;
-}
-
-/* Progress Bar Styles */
-.progress-bar {
-  transition: width 0.6s ease;
-  text-align: center;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.progress-bar-entry {
-  background-color: var(--bs-success);
-}
-
-.progress-bar-mid {
-  background-color: var(--bs-info);
-}
-
-.progress-bar-premium {
-  background-color: var(--bs-warning);
-}
-
-.progress-bar-luxury {
-  background-color: var(--bs-danger);
-}
-
-.progress-bar-low {
-  background-color: var(--bs-primary);
-}
-
-.progress-bar-medium {
-  background-color: var(--bs-info);
-}
-
-.progress-bar-high {
-  background-color: var(--bs-danger);
-}
-
-.small-progress {
-  height: 10px;
-}
-
-.large-progress {
-  height: 20px;
+    background-color: var(--baxus-light-teal);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .bottle-image {
-    max-height: 150px;
-    margin-bottom: 15px;
-  }
-
-  .flavor-profile-container {
-    margin-top: 15px;
-  }
+    .bottle-image {
+        max-height: 150px;
+        margin-bottom: 15px;
+    }
+    
+    .flavor-profile-container {
+        margin-top: 15px;
+    }
 }

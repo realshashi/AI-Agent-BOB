@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Recommendations{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-4">Hello, <span class="text-warning">{{ username }}</span></h1>
+            <p class="lead">Based on your BAXUS collection, here are your personalized whisky recommendations.</p>
+        </div>
+    </div>
+    
+    <!-- User Preference Summary -->
+    <div class="preference-summary mb-5">
+        <h3 class="mb-4">Your Whisky Preferences</h3>
+        
+        <div class="row">
+            <!-- Regions -->
+            <div class="col-md-4 mb-4">
+                <h5><i class="fas fa-map-marker-alt me-2 text-warning"></i>Preferred Regions</h5>
+                <div class="mt-2">
+                    {% for region, percentage in preferences.preferred_regions.items() %}
+                        {% if percentage >= 10 %}
+                            <span class="badge bg-secondary preference-badge">{{ region }}: {{ percentage|round }}%</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Spirit Types -->
+            <div class="col-md-4 mb-4">
+                <h5><i class="fas fa-wine-bottle me-2 text-warning"></i>Spirit Types</h5>
+                <div class="mt-2">
+                    {% for spirit, percentage in preferences.spirit_types.items() %}
+                        {% if percentage >= 10 %}
+                            <span class="badge bg-secondary preference-badge">{{ spirit }}: {{ percentage|round }}%</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Price Range -->
+            <div class="col-md-4 mb-4">
+                <h5><i class="fas fa-tag me-2 text-warning"></i>Price Preferences</h5>
+                <div class="mt-2">
+                    <p class="mb-1">Average Bottle: ${{ preferences.average_bottle_price|round(2) }}</p>
+                    <div class="progress" style="height: 10px;">
+                        {% for range, percentage in preferences.price_ranges.items() %}
+                            {% if percentage > 0 %}
+                                {% if range == 'entry' %}
+                                    <div class="progress-bar bg-success" style="width: {{ percentage }}%" 
+                                         title="Entry ($0-50): {{ percentage|round }}%"></div>
+                                {% elif range == 'mid' %}
+                                    <div class="progress-bar bg-info" style="width: {{ percentage }}%" 
+                                         title="Mid ($51-100): {{ percentage|round }}%"></div>
+                                {% elif range == 'premium' %}
+                                    <div class="progress-bar bg-warning" style="width: {{ percentage }}%" 
+                                         title="Premium ($101-200): {{ percentage|round }}%"></div>
+                                {% elif range == 'luxury' %}
+                                    <div class="progress-bar bg-danger" style="width: {{ percentage }}%" 
+                                         title="Luxury ($201+): {{ percentage|round }}%"></div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Flavor Profile -->
+            <div class="col-md-6 mb-4">
+                <h5><i class="fas fa-chart-pie me-2 text-warning"></i>Flavor Profile</h5>
+                <div class="flavor-profile-container" data-flavors='{{ preferences.flavor_profiles|tojson }}'>
+                    <!-- JS will populate this -->
+                </div>
+            </div>
+            
+            <!-- ABV Preferences -->
+            <div class="col-md-6 mb-4">
+                <h5><i class="fas fa-percentage me-2 text-warning"></i>ABV Preferences</h5>
+                <div class="mt-2">
+                    <div class="progress" style="height: 20px;">
+                        {% for level, percentage in preferences.abv_preferences.items() %}
+                            {% if percentage > 0 %}
+                                {% if level == 'low' %}
+                                    <div class="progress-bar" style="width: {{ percentage }}%" 
+                                         title="Low ABV (<43%): {{ percentage|round }}%">{{ percentage|round }}%</div>
+                                {% elif level == 'medium' %}
+                                    <div class="progress-bar bg-info" style="width: {{ percentage }}%" 
+                                         title="Medium ABV (43-50%): {{ percentage|round }}%">{{ percentage|round }}%</div>
+                                {% elif level == 'high' %}
+                                    <div class="progress-bar bg-danger" style="width: {{ percentage }}%" 
+                                         title="High ABV (>50%): {{ percentage|round }}%">{{ percentage|round }}%</div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recommendations -->
+    <h2 class="mb-4">Your Recommendations</h2>
+    
+    <div class="row">
+        {% for bottle in recommendations %}
+        <div class="col-lg-6 mb-4">
+            <div class="card whisky-card">
+                <div class="card-body">
+                    <h3 class="card-title">{{ bottle.name }}</h3>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <div>
+                            <span class="badge bg-primary">{{ bottle.spirit_type }}</span>
+                            <span class="badge bg-secondary">{{ bottle.region }}</span>
+                            <span class="badge bg-info">{{ bottle.abv }}% ABV</span>
+                        </div>
+                        <div>
+                            {% if bottle.total_score %}
+                                <span class="badge bg-warning" data-bs-toggle="tooltip" title="Rating Score">
+                                    <i class="fas fa-star me-1"></i>{{ bottle.total_score|round(1) }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <p class="mb-1"><strong>MSRP:</strong> ${{ bottle.msrp|round(2) }}</p>
+                            {% if bottle.fair_price %}
+                                <p class="mb-1"><strong>Fair Price:</strong> ${{ bottle.fair_price|round(2) }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-6">
+                            <div class="flavor-profile-container" 
+                                 data-flavors='{
+                                    "peated": {{ bottle.flavor_profile_peated|default(0) }},
+                                    "sherried": {{ bottle.flavor_profile_sherried|default(0) }},
+                                    "fruity": {{ bottle.flavor_profile_fruity|default(0) }},
+                                    "spicy": {{ bottle.flavor_profile_spicy|default(0) }},
+                                    "smoky": {{ bottle.flavor_profile_smoky|default(0) }},
+                                    "vanilla": {{ bottle.flavor_profile_vanilla|default(0) }},
+                                    "caramel": {{ bottle.flavor_profile_caramel|default(0) }}
+                                }'>
+                                <!-- JS will populate this -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="recommendation-reason">
+                        <i class="fas fa-info-circle text-warning me-2"></i>
+                        {{ bottle.explanation }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="text-center mt-5 mb-3">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-search me-2"></i>Try Another Username
+        </a>
+    </div>
+</div>
+
+<!-- Bob Chat Widget -->
+<div class="bob-chat-widget" id="bobChatWidget">
+    <div class="bob-chat-header" id="bobChatHeader">
+        <div class="d-flex align-items-center">
+            <img src="{{ url_for('static', filename='images/bob-avatar.svg') }}" 
+                 alt="Bob" class="bob-avatar me-2" width="24" height="24">
+            <span class="fw-bold">Chat with BOB</span>
+            {% if username %}
+            <span class="badge bg-light text-dark ms-2">@{{ username }}</span>
+            {% endif %}
+        </div>
+        <button class="btn btn-sm btn-link text-white p-0" id="bobChatToggle">
+            <i class="fas fa-minus"></i>
+        </button>
+    </div>
+    <div class="bob-chat-body" id="bobChatBody">
+        <div class="bob-messages" id="bobMessages">
+            <!-- Welcome message -->
+            <div class="message bot-message">
+                <p>Hello! I'm Bob, your whisky expert assistant. How can I help you discover the perfect whisky today?</p>
+            </div>
+        </div>
+        <div class="bob-input-area">
+            <form id="bobChatForm" class="d-flex">
+                <input type="text" id="bobChatInput" class="form-control form-control-sm me-2" 
+                       placeholder="Ask Bob about whisky..." required>
+                <button type="submit" class="btn btn-primary btn-sm px-3">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+            <div class="d-flex justify-content-between mt-2">
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-link text-muted dropdown-toggle p-0" 
+                            id="suggestionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Suggestions
+                    </button>
+                    <ul class="dropdown-menu suggestion-menu" aria-labelledby="suggestionDropdown">
+                        <li><a class="dropdown-item suggestion-link" href="#">What whisky should I try if I like smoky flavors?</a></li>
+                        <li><a class="dropdown-item suggestion-link" href="#">Tell me about Japanese whisky</a></li>
+                        <li><a class="dropdown-item suggestion-link" href="#">Good whisky under $50?</a></li>
+                        <li><a class="dropdown-item suggestion-link" href="#">Compare bourbon and scotch</a></li>
+                    </ul>
+                </div>
+                <button id="resetBobChat" class="btn btn-sm btn-link text-muted p-0">
+                    <i class="fas fa-redo-alt me-1"></i>Reset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Chat widget elements
+    const chatWidget = document.getElementById('bobChatWidget');
+    const chatHeader = document.getElementById('bobChatHeader');
+    const chatBody = document.getElementById('bobChatBody');
+    const chatToggle = document.getElementById('bobChatToggle');
+    const chatForm = document.getElementById('bobChatForm');
+    const chatInput = document.getElementById('bobChatInput');
+    const chatMessages = document.getElementById('bobMessages');
+    const resetButton = document.getElementById('resetBobChat');
+    
+    // Toggle chat widget
+    chatHeader.addEventListener('click', function(e) {
+        if (e.target.id !== 'bobChatToggle' && !e.target.closest('#bobChatToggle')) {
+            toggleChatWidget();
+        }
+    });
+    
+    chatToggle.addEventListener('click', function() {
+        toggleChatWidget();
+    });
+    
+    function toggleChatWidget() {
+        const isOpen = !chatBody.classList.contains('collapsed');
+        
+        if (isOpen) {
+            chatBody.classList.add('collapsed');
+            chatToggle.innerHTML = '<i class="fas fa-plus"></i>';
+        } else {
+            chatBody.classList.remove('collapsed');
+            chatToggle.innerHTML = '<i class="fas fa-minus"></i>';
+            chatInput.focus();
+        }
+    }
+    
+    // Handle form submission
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const message = chatInput.value.trim();
+        if (!message) return;
+        
+        // Add user message
+        addMessage(message, 'user');
+        chatInput.value = '';
+        
+        // Show typing indicator
+        showTypingIndicator();
+        
+        // Send message to server
+        fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+        })
+        .then(res => res.json())
+        .then(data => {
+            // Remove typing indicator and add bot response
+            removeTypingIndicator();
+            addMessage(data.response, 'bot');
+        })
+        .catch(err => {
+            removeTypingIndicator();
+            addMessage('Sorry, I encountered a problem. Please try again.', 'bot');
+            console.error(err);
+        });
+    });
+    
+    // Handle suggestion links
+    document.querySelectorAll('.suggestion-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            chatInput.value = this.textContent;
+            chatForm.dispatchEvent(new Event('submit'));
+        });
+    });
+    
+    // Reset chat
+    resetButton.addEventListener('click', function() {
+        // Clear all messages except the first welcome message
+        while (chatMessages.children.length > 1) {
+            chatMessages.removeChild(chatMessages.lastChild);
+        }
+        
+        // Reset server-side chat history
+        fetch('/chat/reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Show reset confirmation
+                const resetMsg = document.createElement('div');
+                resetMsg.className = 'system-message';
+                resetMsg.textContent = 'Chat history has been reset';
+                chatMessages.appendChild(resetMsg);
+                
+                // Remove after 2 seconds
+                setTimeout(() => {
+                    chatMessages.removeChild(resetMsg);
+                }, 2000);
+            }
+        });
+    });
+    
+    // Helper functions
+    function addMessage(content, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}-message`;
+        
+        if (type === 'bot') {
+            // Process markdown-like formatting
+            content = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+            
+            messageDiv.innerHTML = `<p>${content}</p>`;
+        } else {
+            const p = document.createElement('p');
+            p.textContent = content;
+            messageDiv.appendChild(p);
+        }
+        
+        chatMessages.appendChild(messageDiv);
+        scrollToBottom();
+    }
+    
+    function showTypingIndicator() {
+        const indicator = document.createElement('div');
+        indicator.className = 'message bot-message typing-indicator';
+        indicator.innerHTML = '<span></span><span></span><span></span>';
+        indicator.id = 'typingIndicator';
+        chatMessages.appendChild(indicator);
+        scrollToBottom();
+    }
+    
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+            chatMessages.removeChild(indicator);
+        }
+    }
+    
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+});
+</script>
+{% endblock %}
