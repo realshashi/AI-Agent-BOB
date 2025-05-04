@@ -23,6 +23,8 @@ client = None
 def get_openai_client():
     global client, api_key
     if client is None:
+
+        
         if not api_key:
             logger.error("OpenAI API key not found in environment variables")
             return None
