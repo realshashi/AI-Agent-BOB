@@ -29,10 +29,7 @@ def get_openai_client():
             return None
         try:
             logger.info("Initializing OpenAI client")
-            client = OpenAI(
-                api_key=api_key,
-                timeout=60.0  # Set a reasonable timeout
-            )
+            client = OpenAI(api_key=api_key)
             return client
         except Exception as e:
             logger.error(f"Failed to initialize OpenAI client: {str(e)}")
