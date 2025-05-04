@@ -1,14 +1,16 @@
 // Main JS file for Bob the Whisky Expert
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Ensure loading spinner is hidden on page load
-  const loadingSpinner = document.getElementById("loading-spinner");
-  if (loadingSpinner) {
-    loadingSpinner.style.display = "none";
-  }
+  // Initialize tooltips
+  const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  tooltips.forEach((tooltip) => {
+    new bootstrap.Tooltip(tooltip);
+  });
 
-  // Form validation
+  // Handle username form submission
   const usernameForm = document.getElementById("username-form");
+  const loadingSpinner = document.getElementById("loading-spinner");
+
   if (usernameForm) {
     usernameForm.addEventListener("submit", function (event) {
       const usernameInput = document.getElementById("username");
@@ -18,23 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Show loading spinner only when submitting the form
-      if (loadingSpinner) {
-        loadingSpinner.style.display = "block";
-      }
-
-      // Hide the form
       usernameForm.style.display = "none";
+      loadingSpinner.style.display = "block";
     });
   }
-
-  // Bootstrap tooltips initialization
-  const tooltipTriggerList = [].slice.call(
-    document.querySelectorAll('[data-bs-toggle="tooltip"]')
-  );
-  tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
 
   // Flavor profile visualization
   const flavorContainers = document.querySelectorAll(
@@ -46,12 +35,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // Clear any existing content
     container.innerHTML = "";
 
-    // Create tag-based flavor profile visualization
-    for (const [flavor, value] of Object.entries(flavorData)) {
-      if (value > 0) {
-        // Skip values that are too low to be meaningful
-        if (value < 10) continue;
+    // Sort flavors by value to show strongest first
+    const sortedFlavors = Object.entries(flavorData)
+      .sort(([, a], [, b]) => b - a)
+      .filter(([, value]) => value >= 10); // Only show flavors with value >= 10
 
+    if (sortedFlavors.length > 0) {
+      sortedFlavors.forEach(([flavor, value]) => {
         const flavorTag = document.createElement("span");
         flavorTag.className = "flavor-tag";
 
@@ -64,22 +54,28 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         flavorTag.setAttribute("data-level", level);
-        flavorTag.textContent =
-          flavor.charAt(0).toUpperCase() + flavor.slice(1);
-        container.appendChild(flavorTag);
-      }
-    }
+        // Capitalize first letter and format flavor name
+        const formattedFlavor =
+          flavor.charAt(0).toUpperCase() + flavor.slice(1).replace(/_/g, " ");
+        flavorTag.textContent = formattedFlavor;
 
-    // If there are no flavor tags, add a message
-    if (container.children.length === 0) {
+        // Add tooltip with percentage
+        flavorTag.setAttribute("data-bs-toggle", "tooltip");
+        flavorTag.setAttribute("title", `${Math.round(value)}%`);
+
+        container.appendChild(flavorTag);
+        new bootstrap.Tooltip(flavorTag);
+      });
+    } else {
+      // If no significant flavors, show a message
       const noFlavorMsg = document.createElement("p");
       noFlavorMsg.className = "text-muted small mb-0";
-      noFlavorMsg.textContent = "No flavor profile data available";
+      noFlavorMsg.textContent = "No significant flavor profile data";
       container.appendChild(noFlavorMsg);
     }
   });
 
-  // Handle progress bars
+  // Initialize progress bars
   document.querySelectorAll(".progress-bar").forEach((bar) => {
     const width = bar.getAttribute("data-width");
     if (width) {
