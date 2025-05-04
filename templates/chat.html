@@ -29,8 +29,7 @@ endblock %} {% block content %}
         <div class="card-body">
           <div
             id="chat-messages"
-            class="chat-container mb-3"
-            style="height: 400px; overflow-y: auto"
+            class="chat-container mb-3 chat-messages"
           >
             <!-- Welcome message from Bob -->
             <div class="message-row">
@@ -268,6 +267,10 @@ endblock %} {% block content %}
     border-radius: 8px;
   }
 
+  .chat-messages {
+    height: 400px;
+    overflow-y: auto;
+  }
   .message-row {
     margin-bottom: 10px;
     display: flex;

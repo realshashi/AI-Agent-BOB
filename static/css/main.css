@@ -18,10 +18,10 @@ body {
 
 /* Whisky card styling */
 .whisky-card {
-  background-color: white;
+  background-color: #fff;
   border: 1px solid var(--baxus-border);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s, box-shadow 0.3s;
   overflow: hidden;
 }
@@ -39,7 +39,8 @@ body {
 .bottle-image {
   max-height: 200px;
   object-fit: contain;
-  padding: 1rem;
+  background-color: #fff;
+  padding: 10px;
   border-radius: 8px;
   transition: transform 0.3s;
 }
@@ -51,10 +52,10 @@ body {
 .recommendation-reason {
   background-color: var(--baxus-light-teal);
   border-left: 3px solid var(--baxus-teal);
-  padding: 1rem;
-  margin-top: 1rem;
+  padding: 10px 15px;
+  margin-top: 15px;
   font-style: italic;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 4px 4px 0;
   color: var(--baxus-text);
 }
 
@@ -104,15 +105,13 @@ body {
 
 /* Preference badges */
 .preference-badge {
-  display: inline-block;
-  background-color: white;
-  color: var(--baxus-text);
-  border: 1px solid var(--baxus-teal);
-  padding: 0.35rem 0.75rem;
-  margin-right: 0.5rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  margin-right: 5px;
   margin-bottom: 5px;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  background-color: #ffffff !important;
+  color: var(--baxus-text) !important;
+  border: 1px solid var(--baxus-teal);
   font-weight: 500;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -145,10 +144,6 @@ h2:after {
 
 /* Flavor profile styling */
 .flavor-profile-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  min-height: 2.5rem;
   background-color: #fff;
   border-radius: 8px;
   padding: 10px;
@@ -157,53 +152,35 @@ h2:after {
 
 .flavor-tag {
   display: inline-block;
-  padding: 0.35rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  white-space: nowrap;
+  padding: 3px 8px;
+  margin: 2px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: #fff;
+  background-color: var(--baxus-teal);
 }
 
 .flavor-tag[data-level="high"] {
   background-color: var(--baxus-teal);
-  color: white;
+  font-weight: bold;
 }
 
 .flavor-tag[data-level="medium"] {
-  background-color: var(--baxus-light-teal);
-  color: var(--baxus-dark-teal);
-  border: 1px solid var(--baxus-teal);
+  background-color: #5bc0be;
 }
 
 .flavor-tag[data-level="low"] {
-  background-color: white;
+  background-color: #78c0e0;
   color: var(--baxus-text);
-  border: 1px solid var(--baxus-border);
 }
 
 /* Preference section styling */
 .preference-section {
   background-color: var(--baxus-light-teal);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
   padding: 20px;
   margin-bottom: 30px;
-}
-
-/* Preference card styling */
-.preference-card {
-  background: white;
-  border-radius: 8px;
-  padding: 1.25rem;
-  height: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.preference-card h5 {
-  color: var(--baxus-teal);
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 /* Loading spinner styling */
@@ -215,57 +192,49 @@ h2:after {
 }
 
 /* Progress Bar Styles */
-.progress {
-  background-color: #e9ecef;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
 .progress-bar {
-  text-align: center;
-  font-size: 0.75rem;
-  line-height: 1.25rem;
-  font-weight: 600;
   transition: width 0.6s ease;
+  text-align: center;
+  white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .progress-bar-entry {
-  background-color: #28a745;
+  background-color: var(--bs-success);
 }
 
 .progress-bar-mid {
-  background-color: #17a2b8;
+  background-color: var(--bs-info);
 }
 
 .progress-bar-premium {
-  background-color: #6f42c1;
+  background-color: var(--bs-warning);
 }
 
 .progress-bar-luxury {
-  background-color: #dc3545;
+  background-color: var(--bs-danger);
 }
 
 .progress-bar-low {
-  background-color: #28a745;
+  background-color: var(--bs-primary);
 }
 
 .progress-bar-medium {
-  background-color: #fd7e14;
+  background-color: var(--bs-info);
 }
 
 .progress-bar-high {
-  background-color: #dc3545;
+  background-color: var(--bs-danger);
 }
 
 .small-progress {
-  height: 0.75rem;
+  height: 10px;
 }
 
 .large-progress {
-  height: 1.25rem;
+  height: 20px;
 }
 
 /* Responsive adjustments */

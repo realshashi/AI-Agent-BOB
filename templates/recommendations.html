@@ -14,143 +14,133 @@ block content %}
   </div>
 
   <!-- User Preference Summary -->
-  <div class="preference-section mb-5 p-4">
+  <div class="preference-section mb-5">
     <h3 class="mb-4">Your Whisky Preferences</h3>
 
-    <div class="row g-4">
+    <div class="row">
       <!-- Regions -->
-      <div class="col-md-4">
-        <div class="preference-card">
-          <h5>
-            <i class="fas fa-map-marker-alt me-2 text-success"></i>Preferred
-            Regions
-          </h5>
-          <div class="mt-3">
-            {% for region, percentage in preferences.preferred_regions.items()
-            %} {% if percentage >= 10 %}
-            <span class="badge preference-badge mb-2">
-              {{ region }}: {{ percentage|round }}%
-            </span>
-            {% endif %} {% endfor %}
-          </div>
+      <div class="col-md-4 mb-4">
+        <h5>
+          <i class="fas fa-map-marker-alt me-2 text-success"></i>Preferred
+          Regions
+        </h5>
+        <div class="mt-2">
+          {% for region, percentage in preferences.preferred_regions.items() %}
+          {% if percentage >= 10 %}
+          <span class="badge preference-badge"
+            >{{ region }}: {{ percentage|round }}%</span
+          >
+          {% endif %} {% endfor %}
         </div>
       </div>
 
       <!-- Spirit Types -->
-      <div class="col-md-4">
-        <div class="preference-card">
-          <h5>
-            <i class="fas fa-wine-bottle me-2 text-success"></i>Spirit Types
-          </h5>
-          <div class="mt-3">
-            {% for spirit, percentage in preferences.spirit_types.items() %} {%
-            if percentage >= 10 %}
-            <span class="badge preference-badge mb-2">
-              {{ spirit }}: {{ percentage|round }}%
-            </span>
-            {% endif %} {% endfor %}
-          </div>
+      <div class="col-md-4 mb-4">
+        <h5>
+          <i class="fas fa-wine-bottle me-2 text-success"></i>Spirit Types
+        </h5>
+        <div class="mt-2">
+          {% for spirit, percentage in preferences.spirit_types.items() %} {% if
+          percentage >= 10 %}
+          <span class="badge preference-badge"
+            >{{ spirit }}: {{ percentage|round }}%</span
+          >
+          {% endif %} {% endfor %}
         </div>
       </div>
 
       <!-- Price Range -->
-      <div class="col-md-4">
-        <div class="preference-card">
-          <h5><i class="fas fa-tag me-2 text-success"></i>Price Preferences</h5>
-          <div class="mt-3">
-            <p class="mb-2">
-              Average Bottle: ${{ preferences.average_bottle_price|round(2) }}
-            </p>
-            <div class="progress small-progress mb-3">
-              {% for range, percentage in preferences.price_ranges.items() %} {%
-              if percentage > 0 %} {% if range == 'entry' %}
-              <div
-                class="progress-bar progress-bar-entry"
-                data-width="{{ percentage }}"
-                title="Entry ($0-50): {{ percentage|round }}%"
-              >
-                {{ percentage|round }}%
-              </div>
-              {% elif range == 'mid' %}
-              <div
-                class="progress-bar progress-bar-mid"
-                data-width="{{ percentage }}"
-                title="Mid ($51-100): {{ percentage|round }}%"
-              >
-                {{ percentage|round }}%
-              </div>
-              {% elif range == 'premium' %}
-              <div
-                class="progress-bar progress-bar-premium"
-                data-width="{{ percentage }}"
-                title="Premium ($101-200): {{ percentage|round }}%"
-              >
-                {{ percentage|round }}%
-              </div>
-              {% elif range == 'luxury' %}
-              <div
-                class="progress-bar progress-bar-luxury"
-                data-width="{{ percentage }}"
-                title="Luxury ($201+): {{ percentage|round }}%"
-              >
-                {{ percentage|round }}%
-              </div>
-              {% endif %} {% endif %} {% endfor %}
+      <div class="col-md-4 mb-4">
+        <h5><i class="fas fa-tag me-2 text-success"></i>Price Preferences</h5>
+        <div class="mt-2">
+          <p class="mb-1">
+            Average Bottle: ${{ preferences.average_bottle_price|round(2) }}
+          </p>
+          <div class="progress small-progress">
+            {% for range, percentage in preferences.price_ranges.items() %} {%
+            if percentage > 0 %} {% if range == 'entry' %}
+            <div
+              class="progress-bar progress-bar-entry"
+              data-width="{{ percentage }}"
+              title="Entry ($0-50): {{ percentage|round }}%"
+            >
+              {{ percentage|round }}%
             </div>
+            {% elif range == 'mid' %}
+            <div
+              class="progress-bar progress-bar-mid"
+              data-width="{{ percentage }}"
+              title="Mid ($51-100): {{ percentage|round }}%"
+            >
+              {{ percentage|round }}%
+            </div>
+            {% elif range == 'premium' %}
+            <div
+              class="progress-bar progress-bar-premium"
+              data-width="{{ percentage }}"
+              title="Premium ($101-200): {{ percentage|round }}%"
+            >
+              {{ percentage|round }}%
+            </div>
+            {% elif range == 'luxury' %}
+            <div
+              class="progress-bar progress-bar-luxury"
+              data-width="{{ percentage }}"
+              title="Luxury ($201+): {{ percentage|round }}%"
+            >
+              {{ percentage|round }}%
+            </div>
+            {% endif %} {% endif %} {% endfor %}
           </div>
         </div>
       </div>
 
       <!-- Flavor Profile -->
-      <div class="col-md-6">
-        <div class="preference-card">
-          <h5>
-            <i class="fas fa-chart-pie me-2 text-success"></i>Flavor Profile
-          </h5>
-          <div
-            class="flavor-profile-container mt-3"
-            data-flavors="{{ preferences.flavor_profiles|tojson }}"
-          >
-            <!-- JS will populate this -->
-          </div>
+      <div class="col-md-6 mb-4">
+        <h5>
+          <i class="fas fa-chart-pie me-2 text-success"></i>Flavor Profile
+        </h5>
+        <div
+          class="flavor-profile-container"
+          data-flavors="{{ preferences.flavor_profiles|tojson }}"
+        >
+          <!-- JS will populate this -->
         </div>
       </div>
 
       <!-- ABV Preferences -->
-      <div class="col-md-6">
-        <div class="preference-card">
-          <h5>
-            <i class="fas fa-percentage me-2 text-success"></i>ABV Preferences
-          </h5>
-          <div class="mt-3">
-            <div class="progress large-progress">
-              {% for level, percentage in preferences.abv_preferences.items() %}
-              {% if percentage > 0 %} {% if level == 'low' %}
-              <div
-                class="progress-bar progress-bar-low"
-                data-width="{{ percentage }}"
-                title="Low ABV (<43%): {{ percentage|round }}%"
-              >
-                {{ percentage|round }}%
-              </div>
-              {% elif level == 'medium' %}
-              <div
-                class="progress-bar progress-bar-medium"
-                data-width="{{ percentage }}"
-                title="Medium ABV (43-50%): {{ percentage|round }}%"
-              >
-                {{ percentage|round }}%
-              </div>
-              {% elif level == 'high' %}
-              <div
-                class="progress-bar progress-bar-high"
-                data-width="{{ percentage }}"
-                title="High ABV (>50%): {{ percentage|round }}%"
-              >
-                {{ percentage|round }}%
-              </div>
-              {% endif %} {% endif %} {% endfor %}
+      <div class="col-md-6 mb-4">
+        <h5>
+          <i class="fas fa-percentage me-2 text-success"></i>ABV Preferences
+        </h5>
+        <div class="mt-2">
+          <div class="progress large-progress">
+            {% for level, percentage in preferences.abv_preferences.items() %}
+            {% if percentage > 0 %} {% if level == 'low' %}
+            <div
+              class="progress-bar progress-bar-low"
+              data-width="{{ percentage }}"
+              title="Low ABV (<43%): {{ percentage|round }}%"
+            >
+              {{ percentage|round }}%
             </div>
+            {% elif level == 'medium' %}
+            <div
+              class="progress-bar progress-bar-medium"
+              data-width="{{ percentage }}"
+              title="Medium ABV (43-50%): {{ percentage|round }}%"
+            >
+              {{ percentage|round }}%
+            </div>
+            {% elif level == 'high' %}
+            <div
+              class="progress-bar progress-bar-high"
+              data-width="{{ percentage }}"
+              title="High ABV (>50%): {{ percentage|round }}%"
+            >
+              {{ percentage|round }}%
+            </div>
+            {% endif %} {% endif %} {% endfor %}
           </div>
         </div>
       </div>

@@ -350,9 +350,9 @@ def chat_with_bob(messages: List[Dict[str, str]], username: Optional[str] = None
         if client is None:
             return "I apologize, but I'm having trouble connecting to my whisky knowledge base. The API key is missing. Please try again later."
             
-        # Call the OpenAI API with GPT-3.5-turbo
+        # Call the OpenAI API with GPT-4o Mini
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",  # Using standard GPT-3.5-turbo model
+            model="gpt-4o-mini",  # Using GPT-4o Mini as specified by user
             messages=conversation,
             temperature=0.7,  # Balanced between creativity and consistency
             max_tokens=250,  # Reduced token usage
