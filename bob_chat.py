@@ -21,16 +21,22 @@ api_key = os.environ.get("OPENAI_API_KEY")
 client = None
 
 def get_openai_client():
+    """Get or create an OpenAI client instance"""
     global client, api_key
     if client is None:
-
-        
         if not api_key:
             logger.error("OpenAI API key not found in environment variables")
             return None
-        else:
-            logger.info("OpenAI API key found in environment variables")
-            client = OpenAI(api_key=api_key)
+        try:
+            logger.info("Initializing OpenAI client")
+            client = OpenAI(
+                api_key=api_key,
+                timeout=60.0  # Set a reasonable timeout
+            )
+            return client
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenAI client: {str(e)}")
+            return None
     return client
 
 def add_to_cache(question: str, answer: str) -> None:
